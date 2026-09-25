@@ -154,6 +154,25 @@ td{color:#e6dfe9!important;border-bottom-color:#3c343f!important}
 @media(max-width:900px){body,.main{background:#1b181d!important}}
 
 
+/* V8 FINAL MOBILE GEOMETRY + CACHE FIX */
+@media(max-width:900px){
+  html,body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important;}
+  .app{display:grid!important;grid-template-columns:64px minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;}
+  .side{grid-column:1!important;position:fixed!important;left:0!important;top:0!important;bottom:0!important;width:64px!important;height:100vh!important;z-index:10000!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;}
+  .main{grid-column:2!important;position:relative!important;display:block!important;float:none!important;clear:none!important;margin:0!important;width:auto!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;padding:10px!important;overflow-x:hidden!important;}
+  .main > section{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;margin:0!important;}
+  .top,.panel,.card,.result,.term,.slot,.doc-card,.quick-actions,.cards,.terms,.slots,.grid2,.desktop-grid,.doc-grid{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;}
+  .form input,.form select,.form textarea,input,select,textarea{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;}
+  .quick-actions,.cards,.terms,.slots,.grid2,.desktop-grid,.doc-grid{grid-template-columns:1fr!important;}
+  .panel{overflow-x:auto!important;}
+}
+@media(max-width:520px){
+  .main{padding:8px!important;}
+  .top{padding:14px!important;}
+  .top h1{font-size:20px!important;line-height:1.2!important;overflow-wrap:anywhere!important;}
+  .btn{width:100%!important;margin-left:0!important;margin-right:0!important;}
+}
+
 /* V7 MOBILE + STALE CACHE HARDENING */
 html,body{width:100%;max-width:100%;min-width:0;overflow-x:hidden!important}
 body{min-height:100vh;background:#1b181d!important;color:#eee7f2!important}
@@ -1130,7 +1149,9 @@ function restoreBackup(ev){const f=ev.target.files[0];if(!f)return;const r=new F
 function clearAllData(){if(!confirm('This will delete ALL local M.R LENDS records from this browser. Continue?'))return;if(!confirm('FINAL CONFIRMATION: Make sure you have downloaded a backup first.'))return;['mr_lends_loans','mr_lends_payments','mr_lends_renewals','mr_lends_clients'].forEach(k=>localStorage.removeItem(k));refreshAll();alert('All local records have been cleared.');}
 function exportCSV(){const {loans}=allData();let rows=[['Loan ID','Client','Term','Principal','Interest','GCash','Total','Release Date','First Due','Renewal Date','Status']];loans.forEach(x=>rows.push([x.id,x.name,x.weeks?x.weeks+' WEEKS':'FOREVER',x.principal,x.principal*x.rate/100,x.gcash,x.total,x.releaseDate,x.firstDue||'',x.renewalDate||'',x.status]));const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='MR_LENDS_LOAN_REPORT.csv';a.click();}
 
+show('dashboard');
 const todayISO=new Date().toISOString().slice(0,10);let payDateEl=document.getElementById('payDate');if(payDateEl&&!payDateEl.value)payDateEl.value=todayISO;
+show('dashboard');
 renderClients();
 refreshDashboard();
 refreshCollectionsMonitor();
@@ -1144,7 +1165,10 @@ loadCloudConfig();
   try{
     const regs=await navigator.serviceWorker.getRegistrations();
     for(const r of regs){ try{await r.unregister();}catch(e){} }
-    await navigator.serviceWorker.register('sw.js?v=7');
+    if('caches' in window){
+      const keys=await caches.keys();
+      for(const k of keys){ if(String(k).toLowerCase().includes('mr-lends')){ try{await caches.delete(k);}catch(e){} } }
+    }
   }catch(e){}
 })();
 </script>
