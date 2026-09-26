@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#7B4AB5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M.R LENDS • Lending Manager</title>
+<style>
+:root{--purple:#8b5bb7;--purple2:#b993d6;--lav:#f3eafb;--pink:#fde8f0;--pink2:#f7cddd;--white:#fff;--text:#33253d;--muted:#786b80;--green:#4f9b76;--red:#c65b73}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#faf7fc;color:var(--text)}
+.app{display:flex;min-height:100vh}.side{width:245px;background:linear-gradient(180deg,#8b5bb7,#a97ac9);color:white;padding:24px 16px;position:fixed;inset:0 auto 0 0}
+.logo{font-size:25px;font-weight:800;margin-bottom:4px}.sub{opacity:.85;font-size:12px;margin-bottom:30px}
+.nav button{width:100%;border:0;background:transparent;color:white;text-align:left;padding:13px 14px;border-radius:12px;margin:4px 0;font-size:14px;cursor:pointer}.nav button.active,.nav button:hover{background:rgba(255,255,255,.2)}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1800px}.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 22px}.quick-actions .btn{min-height:52px}.desktop-note{display:block}.select-help{font-size:11px;color:var(--muted);margin-top:6px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.top h1{margin:0;font-size:27px}.badge{background:var(--pink);padding:9px 14px;border-radius:20px;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:white;border:1px solid #eee2f4;border-radius:18px;padding:18px;box-shadow:0 5px 18px #5d3b7410}.card .icon{font-size:25px}.label{font-size:12px;color:var(--muted);margin-top:8px}.value{font-size:24px;font-weight:800;margin-top:5px}
+.section{margin-top:25px}.section h2{font-size:18px;margin:0 0 14px}.terms{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.term{background:linear-gradient(135deg,#fff,#f4eafa);border:1px solid #e4d4ee;border-radius:16px;padding:16px;cursor:pointer}.term:hover{transform:translateY(-2px)}.term strong{font-size:18px}.term small{display:block;color:var(--muted);margin-top:5px}
+.panel{background:white;border:1px solid #eee2f4;border-radius:18px;padding:18px;margin-top:18px}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.slot{border:1px solid #eadff0;background:#fff;border-radius:13px;padding:13px;cursor:pointer}.slot:hover{border-color:var(--purple);background:var(--lav)}.slot .name{font-weight:700;font-size:13px}.status{font-size:11px;color:var(--green);margin-top:5px}
+.hidden{display:none}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px}.form label{font-size:12px;color:var(--muted);display:block;margin:12px 0 6px}.form input,.form select{width:100%;padding:12px;border:1px solid #dfd3e6;border-radius:10px;font-size:14px;background:#fff}.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:var(--purple);color:white}.pink{background:var(--pink);color:#8b4770}.back{background:#eee7f1;color:#55465d;margin-right:7px}
+.result{background:linear-gradient(135deg,#f6edfb,#fff0f5);border-radius:15px;padding:16px;margin-top:16px}.result b{font-size:20px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #eee;font-size:13px}th{color:var(--muted);font-size:11px;text-transform:uppercase}
+@media(min-width:1400px){.main{padding:32px 38px}.panel{padding:22px}.cards{grid-template-columns:repeat(4,1fr)}.terms{grid-template-columns:repeat(6,1fr)}}
+@media(max-width:900px){.side{width:64px;padding:18px 8px}.logo,.sub,.nav button span{display:none}.nav button{text-align:center;padding:13px 8px}.main{margin-left:64px;width:calc(100% - 64px);padding:12px}.cards{grid-template-columns:1fr}.terms{grid-template-columns:1fr}.slots{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.loanbook-head{display:block!important}.loanbook-title{font-size:22px!important}.loanbook-grid{grid-template-columns:1fr!important}.loanbook-summary{grid-template-columns:1fr 1fr!important}.loanbook-table{font-size:11px;min-width:760px}.loanbook-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.loanbook-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.loanbook-actions .btn{width:100%;margin:0!important}.quick-actions{grid-template-columns:1fr 1fr}.desktop-note{display:none}}
+@media print{
+ .side,.top,.nav,.btn,.badge,#receiptLoan{display:none!important}
+ .main{margin:0;width:100%;padding:0}.panel{box-shadow:none!important;border:0!important}
+ body{background:#fff}
+}
+
+/* V3 responsive desktop/mobile + document vault */
+.desktop-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.doc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.doc-card{border:1px solid #eadff0;border-radius:14px;padding:14px;background:#fff}
+.doc-thumb{width:100%;height:180px;object-fit:cover;border-radius:10px;background:#f3eafb;display:block}
+.doc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cloud-ok{color:#2f7f59;font-weight:700}.cloud-warn{color:#9a6b20;font-weight:700}.cloud-bad{color:#a33f58;font-weight:700}
+@media(min-width:1200px){.grid2{grid-template-columns:1fr 1fr}.form input,.form select{min-height:46px}.main{padding:32px 38px}.cards{grid-template-columns:repeat(4,1fr)}.doc-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.doc-grid{grid-template-columns:1fr}.desktop-grid{grid-template-columns:1fr 1fr}.main{padding:12px}.form input,.form select,.btn{min-height:46px}.top h1{font-size:24px}}
+@media(max-width:520px){.desktop-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.quick-actions{grid-template-columns:1fr 1fr}.doc-thumb{height:210px}}
+/* MOBILE LAYOUT FIX v4 — keep content clear of fixed sidebar */
+@media(max-width:900px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  .app{display:block;width:100%;min-width:0}
+  .side{position:fixed!important;left:0!important;top:0!important;bottom:0!important;width:64px!important;z-index:1000!important;padding:18px 8px!important;overflow-y:auto}
+  .main{display:block!important;position:relative!important;margin-left:64px!important;width:calc(100% - 64px)!important;max-width:none!important;padding:12px!important;min-width:0!important;overflow-x:hidden!important}
+  main section{width:100%;min-width:0;overflow:visible}
+  main section > .top{width:100%;min-width:0;overflow-wrap:anywhere}
+  .panel,.card,.result,.term,.doc-card{max-width:100%;min-width:0}
+  .panel{overflow-x:auto}
+  .doc-grid,.desktop-grid,.grid2,.cards,.terms,.slots,.quick-actions{width:100%;min-width:0}
+  .doc-card{overflow:hidden}
+  .doc-card *{max-width:100%;overflow-wrap:anywhere}
+  table{min-width:0}
+}
+@media(max-width:520px){
+  .main{margin-left:64px!important;width:calc(100% - 64px)!important;padding:10px!important}
+  .top{gap:10px;align-items:flex-start}
+  .top h1{font-size:21px!important;line-height:1.2}
+  .badge{font-size:10px;padding:7px 9px}
+  .quick-actions{grid-template-columns:1fr!important}
+  .loanbook-table{min-width:720px}
+  .doc-thumb{height:180px}
+}
+
+/* M.R LENDS purple professional theme */
+main section > .top{background:linear-gradient(135deg,#f4eafa,#fff);border:1px solid #e5d4ee;border-radius:18px;padding:18px 20px;box-shadow:0 5px 18px #6f459812}
+main section > .top h1{color:#6f4598}
+.panel h2,.section h2{color:#6f4598}
+.panel{box-shadow:0 5px 18px #6f45980d}
+th{background:#f3eafb;color:#6f4598!important}
+td{border-bottom:1px solid #eee2f4}
+.form input:focus,.form select:focus,input:focus,select:focus{outline:none;border-color:#a77acb;box-shadow:0 0 0 3px #f1e6f8}
+.btn.primary{background:linear-gradient(135deg,#7b4ab5,#9b6ac6)}
+.btn.pink{background:#fde8f0;color:#8b4770;border:1px solid #f4cddd}
+.receipt-paper{background:#fff;border:2px solid #8b5bb7;border-radius:18px;padding:22px;box-shadow:0 8px 25px #6f459815}
+.receipt-brand{background:linear-gradient(135deg,#8b5bb7,#b993d6);color:#fff;border-radius:14px;padding:18px;text-align:center;margin-bottom:16px}
+.receipt-brand .brand-name{font-size:28px;font-weight:900;letter-spacing:.4px}
+.receipt-brand .brand-sub{font-size:12px;letter-spacing:2px;margin-top:4px}
+.receipt-total{background:linear-gradient(135deg,#f3eafb,#fde8f0);border:1px solid #e5d4ee;border-radius:14px;padding:15px;text-align:center}
+.receipt-total .amount{font-size:28px;font-weight:900;color:#6f4598}
+.receipt-divider{border:0;border-top:1px dashed #c9b0d8;margin:18px 0}
+.print-only{display:none}
+@media print{
+ body{background:#fff!important}
+ .side,.nav,.top,.btn,.badge,#receiptLoan,#paymentReceiptPayment,#paymentReceiptLoan,.screen-only{display:none!important}
+ .main{margin:0!important;width:100%!important;padding:0!important;max-width:none!important}
+ main section{display:none!important}
+ main section#receipt{display:block!important}
+ #receipt .receipt-selector{display:none!important}
+ .receipt-paper{display:block!important;border:2px solid #7b4ab5!important;box-shadow:none!important;border-radius:0!important;max-width:none!important;padding:24px!important;page-break-inside:avoid}
+ .receipt-paper + .receipt-paper{margin-top:30px;page-break-before:always}
+ .receipt-brand{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .receipt-total{background:#f3eafb!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ table th{background:#f3eafb!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+
+/* V5 FINAL MOBILE GEOMETRY FIX */
+@media (max-width:900px){
+  html,body{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0!important;overflow-x:hidden!important;}
+  .app{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;}
+  .side{position:fixed!important;left:0!important;top:0!important;bottom:0!important;width:64px!important;height:100vh!important;z-index:9999!important;padding:18px 8px!important;overflow-y:auto!important;overflow-x:hidden!important;}
+  .main{display:block!important;position:relative!important;box-sizing:border-box!important;float:none!important;clear:both!important;margin:0 0 0 64px!important;width:calc(100% - 64px)!important;max-width:none!important;min-width:0!important;padding:10px!important;overflow:visible!important;}
+  .main > section{display:block;box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0!important;overflow:visible!important;}
+  .main > section.hidden{display:none!important;}
+  .top,.panel,.card,.result,.term,.doc-card,.quick-actions,.cards,.terms,.slots,.grid2,.desktop-grid,.doc-grid{box-sizing:border-box!important;max-width:100%!important;min-width:0!important;}
+  .top{width:100%!important;overflow:visible!important;}
+  .top h1{max-width:100%!important;overflow-wrap:anywhere!important;word-break:normal!important;}
+  .panel{width:100%!important;overflow-x:auto!important;overflow-y:visible!important;}
+  .panel > .form,.panel.form{min-width:0!important;max-width:100%!important;}
+  .form input,.form select,.form textarea{box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;}
+  .quick-actions{grid-template-columns:1fr!important;width:100%!important;}
+  .cards,.terms,.slots,.grid2,.desktop-grid,.doc-grid{grid-template-columns:1fr!important;width:100%!important;}
+  table{max-width:none!important;}
+  .receipt-paper{width:100%!important;max-width:100%!important;overflow:hidden!important;}
+}
+@media (max-width:520px){
+  .main{margin-left:64px!important;width:calc(100% - 64px)!important;padding:8px!important;}
+  .top{padding:14px!important;}
+  .top h1{font-size:20px!important;line-height:1.2!important;}
+  .badge{max-width:100%!important;}
+  .panel{padding:14px!important;}
+  .btn{width:100%!important;margin-left:0!important;margin-right:0!important;}
+}
+
+/* M.R LENDS V6 — DARK PURPLE / CHARCOAL BACKGROUND THEME */
+body{background:#1b181d!important;color:#eee7f2!important}
+.main{background:#1b181d!important}
+main section > .top{background:linear-gradient(135deg,#171519,#241e27)!important;border-color:#4a394d!important;box-shadow:0 5px 18px rgba(0,0,0,.28)!important}
+main section > .top h1{color:#cda2ff!important}
+main section > .top .sub{color:#bdb0c3!important}
+.card,.panel,.slot,.doc-card,.receipt-paper{background:#111011!important;color:#eee7f2!important;border-color:#463b49!important;box-shadow:0 5px 18px rgba(0,0,0,.24)!important}
+.card .label,.label,.select-help,.form label,th{color:#b9aebe!important}
+.value,.panel h2,.section h2,.loanbook-title{color:#d5b6f5!important}
+.term{background:linear-gradient(135deg,#2a242c,#342c37)!important;color:#eee7f2!important;border-color:#51445a!important}
+.term small,.slot .name{color:#c9bccf!important}
+.slot{background:#181519!important}
+.slot:hover{background:#30263a!important;border-color:#9a6ac6!important}
+.result{background:linear-gradient(135deg,#2c2130,#392531)!important;color:#eee7f2!important}
+.form input,.form select,input,select{background:#171519!important;color:#eee7f2!important;border-color:#514553!important}
+.form input::placeholder,input::placeholder{color:#8f8493!important}
+th{background:#30233a!important;color:#d4b4f2!important}
+td{color:#e6dfe9!important;border-bottom-color:#3c343f!important}
+.badge{background:#38252f!important;color:#eee7f2!important}
+.back{background:#302b31!important;color:#e8deeb!important}
+.doc-thumb{background:#29222c!important}
+.receipt-paper{background:#111011!important}
+.receipt-total{background:linear-gradient(135deg,#2b2330,#33232c)!important;color:#eee7f2!important}
+.receipt-total .amount{color:#d5b6f5!important}
+.quick-actions .btn.pink,.btn.pink{background:#38252f!important;color:#e7a8c7!important;border-color:#765064!important}
+@media(max-width:900px){body,.main{background:#1b181d!important}}
+
+
+/* V8 FINAL MOBILE GEOMETRY + CACHE FIX */
+@media(max-width:900px){
+  html,body{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important;}
+  .app{display:grid!important;grid-template-columns:64px minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;}
+  .side{grid-column:1!important;position:fixed!important;left:0!important;top:0!important;bottom:0!important;width:64px!important;height:100vh!important;z-index:10000!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;}
+  .main{grid-column:2!important;position:relative!important;display:block!important;float:none!important;clear:none!important;margin:0!important;width:auto!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;padding:10px!important;overflow-x:hidden!important;}
+  .main > section{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;margin:0!important;}
+  .top,.panel,.card,.result,.term,.slot,.doc-card,.quick-actions,.cards,.terms,.slots,.grid2,.desktop-grid,.doc-grid{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;}
+  .form input,.form select,.form textarea,input,select,textarea{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;}
+  .quick-actions,.cards,.terms,.slots,.grid2,.desktop-grid,.doc-grid{grid-template-columns:1fr!important;}
+  .panel{overflow-x:auto!important;}
+}
+@media(max-width:520px){
+  .main{padding:8px!important;}
+  .top{padding:14px!important;}
+  .top h1{font-size:20px!important;line-height:1.2!important;overflow-wrap:anywhere!important;}
+  .btn{width:100%!important;margin-left:0!important;margin-right:0!important;}
+}
+
+/* V7 MOBILE + STALE CACHE HARDENING */
+html,body{width:100%;max-width:100%;min-width:0;overflow-x:hidden!important}
+body{min-height:100vh;background:#1b181d!important;color:#eee7f2!important}
+.app{width:100%;min-width:0}
+.main{box-sizing:border-box!important;min-width:0!important}
+main section{box-sizing:border-box!important;min-width:0!important}
+main section.hidden{display:none!important}
+@media(max-width:900px){
+  .side{width:64px!important;z-index:10000!important}
+  .main{margin-left:64px!important;width:calc(100% - 64px)!important;max-width:none!important;min-width:0!important;padding:10px!important;overflow-x:hidden!important}
+  main section{width:100%!important;max-width:100%!important;margin:0!important}
+  .top,.panel,.card,.result,.term,.slot,.doc-card,.quick-actions,.cards,.terms,.slots,.grid2,.desktop-grid,.doc-grid{max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+  .panel{overflow-x:auto!important}
+  .form input,.form select,input,select,textarea{max-width:100%!important;box-sizing:border-box!important}
+  table{max-width:100%!important}
+}
+@media(max-width:520px){
+  .main{margin-left:64px!important;width:calc(100% - 64px)!important;padding:8px!important}
+  .quick-actions{grid-template-columns:1fr!important}
+  .cards,.terms,.slots,.grid2,.desktop-grid,.doc-grid{grid-template-columns:1fr!important}
+}
+/* V7 dark theme reinforcement */
+main section > .top{background:linear-gradient(135deg,#171519,#241e27)!important;color:#eee7f2!important}
+.card,.panel,.slot,.doc-card,.receipt-paper{background:#111011!important;color:#eee7f2!important}
+.term{background:linear-gradient(135deg,#2a242c,#342c37)!important;color:#eee7f2!important}
+.form input,.form select,input,select,textarea{background:#171519!important;color:#eee7f2!important;border-color:#51445a!important}
+
+/* MOBILE DRAWER FIX V10 */
+@media(max-width:900px){
+  .side{
+    width:210px!important;
+    max-width:78vw!important;
+    transform:translateX(-110%)!important;
+    transition:transform .22s ease!important;
+    box-shadow:8px 0 24px rgba(0,0,0,.35)!important;
+    padding:72px 12px 18px!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+  }
+  .side.mobile-open{
+    transform:translateX(0)!important;
+  }
+  .side .logo{
+    display:block!important;
+    font-size:20px!important;
+    margin:0 4px 3px!important;
+    white-space:nowrap!important;
+  }
+  .side .sub{
+    display:block!important;
+    font-size:10px!important;
+    margin:0 4px 18px!important;
+    white-space:nowrap!important;
+  }
+  .side .nav{
+    display:block!important;
+  }
+  .side .nav button{
+    display:block!important;
+    width:100%!important;
+    text-align:left!important;
+    padding:11px 10px!important;
+    margin:3px 0!important;
+    font-size:13px!important;
+    white-space:nowrap!important;
+  }
+  .side .nav button span{
+    display:inline!important;
+  }
+  .main{
+    margin-left:0!important;
+    width:100%!important;
+    max-width:100%!important;
+    padding:10px!important;
+  }
+  .mobile-menu-toggle{
+    display:flex!important;
+  }
+  .mobile-menu-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.52);
+    z-index:9998;
+  }
+  .mobile-menu-backdrop.show{display:block}
+}
+.mobile-menu-toggle{
+  display:none;
+  position:fixed;
+  left:10px;
+  top:10px;
+  width:46px;
+  height:46px;
+  border:1px solid #6d5278;
+  border-radius:14px;
+  background:#8b5bb7;
+  color:#fff;
+  font-size:23px;
+  align-items:center;
+  justify-content:center;
+  z-index:10001;
+  box-shadow:0 6px 18px rgba(0,0,0,.28);
+}
+@media(min-width:901px){
+  .mobile-menu-toggle,.mobile-menu-backdrop{display:none!important}
+}
+
+
+/* V10 mobile menu cleanup */
+@media(max-width:900px){
+  .main{padding-top:58px!important}
+}
+
+/* V11: MOBILE NO-DRAWER MENU — avoids the blank/backdrop problem */
+@media(max-width:900px){
+  .side{display:none!important;}
+  .mobile-menu-backdrop{display:none!important;}
+  .mobile-menu-toggle{
+    display:flex!important;
+    position:fixed!important;
+    left:12px!important;
+    top:12px!important;
+    width:52px!important;
+    height:52px!important;
+    border:1px solid #c99be8!important;
+    border-radius:15px!important;
+    background:#8b5bb7!important;
+    color:#fff!important;
+    font-size:25px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    z-index:10001!important;
+    box-shadow:0 7px 20px rgba(0,0,0,.30)!important;
+  }
+  .main{
+    margin-left:0!important;
+    width:100%!important;
+    max-width:none!important;
+    padding:70px 10px 20px!important;
+  }
+  #mobileMenuPanel{
+    display:none;
+    position:fixed;
+    left:12px;
+    top:72px;
+    width:min(300px,calc(100vw - 24px));
+    max-height:calc(100vh - 88px);
+    overflow-y:auto;
+    padding:10px;
+    background:#211b24;
+    border:1px solid #765b82;
+    border-radius:18px;
+    box-shadow:0 14px 35px rgba(0,0,0,.45);
+    z-index:10000;
+  }
+  #mobileMenuPanel.open{display:block}
+  #mobileMenuPanel button{
+    display:block;
+    width:100%;
+    border:0;
+    background:transparent;
+    color:#f4edf7;
+    text-align:left;
+    padding:13px 12px;
+    margin:2px 0;
+    border-radius:12px;
+    font-size:14px;
+    line-height:1.2;
+  }
+  #mobileMenuPanel button:active,
+  #mobileMenuPanel button:hover{
+    background:#6f4598;
+  }
+  #mobileMenuPanel .mobile-menu-title{
+    padding:7px 10px 10px;
+    color:#cfa9e8;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.4px;
+  }
+}
+@media(min-width:901px){
+  #mobileMenuPanel{display:none!important}
+}
+
+/* FINAL MOBILE SECTION FIX
+   Only the selected section is allowed to occupy page space.
+   This prevents hidden/empty sections from creating large blank areas. */
+main > section{display:none!important}
+main > section.section-active{display:block!important}
+@media(max-width:900px){
+  html,body{overflow-x:hidden!important;width:100%!important;max-width:100%!important}
+  .main{margin-left:0!important;width:100%!important;max-width:100%!important;padding:70px 10px 20px!important}
+  main > section{display:none!important;width:100%!important;max-width:100%!important;margin:0!important}
+  main > section.section-active{display:block!important}
+  main > section.section-active > .top{margin-top:0!important}
+  #mobileMenuPanel{z-index:10001!important}
+}
+
+/* FINAL SECTION VISIBILITY FIX */
+main.main > section.hidden{display:none!important;visibility:hidden!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;}
+main.main > section:not(.hidden){display:block!important;visibility:visible!important;height:auto!important;}
+@media(max-width:900px){main.main{margin-left:0!important;width:100%!important;max-width:100%!important;padding:58px 10px 20px!important;overflow-x:hidden!important;}main.main > section{width:100%!important;max-width:100%!important;box-sizing:border-box!important;}main.main > section.hidden{display:none!important;height:0!important;overflow:hidden!important;}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="logo">💜 M.R LENDS</div><div class="sub">CASH LOAN MANAGEMENT</div>
+  <div class="nav">
+    <button class="active" onclick="show('dashboard',this)">🏠 <span>Dashboard</span></button>
+    <button onclick="show('clients',this)">👥 <span>Clients</span></button>
+    <button onclick="show('loanBook',this);renderLoanBookList()">📖 <span>Loan Book</span></button>
+    <button onclick="show('loan',this)">💰 <span>New Loan</span></button>
+    <button onclick="show('payment',this)">💵 <span>Payment</span></button>
+    <button onclick="show('history',this)">📚 <span>Loan History</span></button>
+    <button onclick="show('termDash',this)">📊 <span>Term Dashboard</span></button>
+    <button onclick="show('receipt',this)">🧾 <span>Loan Receipt</span></button>
+    <button onclick="show('reports',this)">📈 <span>Reports</span></button>
+    <button onclick="show('documents',this);renderDocumentLoans()">🪪 <span>Documents</span></button>
+    <button onclick="show('cloud',this)">☁️ <span>Cloud & Security</span></button>
+    <button onclick="show('backup',this)">🛡️ <span>Backup & Tools</span></button>
+  </div>
+</aside>
+
+<button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu" onclick="toggleMobileMenu()">☰</button><div class="mobile-menu-backdrop" id="mobileMenuBackdrop" onclick="toggleMobileMenu()"></div><div id="mobileMenuPanel" aria-label="Mobile navigation"><div class="mobile-menu-title">M.R LENDS MENU</div></div>
+<main class="main">
+<section id="dashboard">
+ <div class="top"><div><h1>Good day, M.R LENDS 💜</h1><div class="label">Loan management dashboard</div></div><div class="badge">● System Ready</div></div>
+ <div class="quick-actions"><button class="btn primary" onclick="showById('loan')">💰 NEW LOAN</button><button class="btn pink" onclick="showById('payment')">💵 RECORD PAYMENT</button><button class="btn back" onclick="showById('loanBook');renderLoanBookList()">📖 LOAN BOOK</button><button class="btn back" onclick="showById('reports');refreshReports()">📊 REPORTS</button></div>
+ <div class="cards">
+  <div class="card"><div class="icon">💰</div><div class="label">Active Loans</div><div class="value" id="dashActive">₱0.00</div></div>
+  <div class="card"><div class="icon">💵</div><div class="label">Collections</div><div class="value" id="dashCollections">₱0.00</div></div>
+  <div class="card"><div class="icon">⚠️</div><div class="label">Penalties</div><div class="value" id="dashPenalties">₱0.00</div></div>
+  <div class="card"><div class="icon">📱</div><div class="label">GCash Fees</div><div class="value" id="dashGcash">₱0.00</div></div>
+  <div class="card"><div class="icon">📈</div><div class="label">Net Income</div><div class="value" id="dashNet">₱0.00</div></div>
+  <div class="card"><div class="icon">📅</div><div class="label">Total Weekly Collectibles</div><div class="value" id="dashWeeklyCollectibles">₱0.00</div></div>
+  <div class="card"><div class="icon">📆</div><div class="label">Interest Per Day</div><div class="value" id="dashInterestPerDay">₱0.00</div></div>
+  <div class="card"><div class="icon">🏦</div><div class="label">Total Principal</div><div class="value" id="dashPrincipal">₱0.00</div></div>
+  <div class="card"><div class="icon">💜</div><div class="label">Total Interest</div><div class="value" id="dashInterest">₱0.00</div></div>
+  <div class="card"><div class="icon">⚠️</div><div class="label">Total Penalty Collected</div><div class="value" id="dashPenaltyCollected">₱0.00</div></div>
+  <div class="card"><div class="icon">🗓️</div><div class="label">Monthly Income</div><div class="value" id="dashMonthlyIncome">₱0.00</div></div>
+ </div>
+ <div class="section"><h2>💜 Loan Terms</h2><div class="terms">
+  <div class="term" onclick="openTerm('1 WEEK',10)"><strong>1 WEEK</strong><small>Automatic 10% • 10 slots</small></div>
+  <div class="term" onclick="openTerm('4 WEEKS',15)"><strong>4 WEEKS</strong><small>Automatic 15% • 10 slots</small></div>
+  <div class="term" onclick="openTerm('5 WEEKS',20)"><strong>5 WEEKS</strong><small>Automatic 20% • 10 slots</small></div>
+  <div class="term" onclick="openTerm('7 WEEKS',25)"><strong>7 WEEKS</strong><small>Automatic 25% • 10 slots</small></div>
+  <div class="term" onclick="openTerm('8 WEEKS',30)"><strong>8 WEEKS</strong><small>Automatic 30% • 10 slots</small></div>
+  <div class="term" onclick="openTerm('FOREVER',0)"><strong>FOREVER</strong><small>Non-paying / monitoring • 10 slots</small></div>
+ </div></div>
+ <div class="panel"><h2>📊 System Overview</h2><p class="label">50 client slots available • 5 loan terms • Automatic interest computation</p><p class="desktop-note" style="margin:8px 0 0;color:var(--muted);font-size:12px">🖥️ PC: landscape layout with multi-column cards and forms. 📱 Phone: compact portrait layout with touch-friendly controls.</p></div>
+ <div class="panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+   <div><h2>📅 Collections Monitor</h2><div class="label">Today, overdue, and upcoming scheduled payments</div></div>
+   <button class="btn pink" onclick="refreshCollectionsMonitor()">🔄 Refresh</button>
+  </div>
+  <div class="cards" style="margin-top:14px">
+   <div class="card"><div class="icon">🔔</div><div class="label">Due Today</div><div class="value" id="dueTodayCount">0</div></div>
+   <div class="card"><div class="icon">⚠️</div><div class="label">Overdue</div><div class="value" id="overdueCount">0</div></div>
+   <div class="card"><div class="icon">📆</div><div class="label">Next 7 Days</div><div class="value" id="upcomingCount">0</div></div>
+   <div class="card"><div class="icon">💵</div><div class="label">Outstanding Scheduled</div><div class="value" id="outstandingScheduled">₱0.00</div></div>
+  </div>
+  <div style="overflow:auto;margin-top:14px">
+   <table><thead><tr><th>Status</th><th>Client</th><th>Loan ID</th><th>Due Date</th><th>Scheduled</th><th>Paid</th><th>Balance</th></tr></thead>
+   <tbody id="collectionsMonitorBody"><tr><td colspan="7" style="text-align:center;color:#888">No scheduled payments yet.</td></tr></tbody></table>
+  </div>
+ </div>
+</section>
+
+<section id="clients" class="hidden">
+ <div class="top"><div><h1>👥 Clients</h1><div class="label">50 client slots across 5 terms</div></div></div>
+ <div class="panel">
+  <div class="form">
+    <label>Search Client / Slot</label>
+    <input id="clientSearch" placeholder="Search Client 01..." oninput="filterClients()">
+  </div>
+  <div id="clientPanel"></div>
+</div>
+<div class="panel hidden" id="clientDetail">
+  <h2>👤 Client Details</h2>
+  <div class="grid2">
+    <div class="form">
+      <label>Client Name</label><input id="detailName" placeholder="Client name">
+      <label>Mobile Number</label><input id="detailMobile" placeholder="09XXXXXXXXX">
+      <label>Address</label><input id="detailAddress" placeholder="Client address">
+    </div>
+    <div class="form">
+      <label>Selected Term</label><input id="detailTerm" readonly>
+      <label>Principal</label><input id="detailPrincipal" type="number" placeholder="₱0.00">
+      <label>Status</label><select id="detailStatus"><option>Available</option><option>Active</option><option>Completed</option><option>Late</option></select>
+    </div>
+  </div>
+  <button class="btn primary" style="margin-top:15px" onclick="saveClientDetail()">💾 Save Client</button>
+  <button class="btn" style="margin-top:15px;margin-left:8px" onclick="showClientHistory()">📚 VIEW CLIENT HISTORY</button>
+  <button class="btn pink" style="margin-top:15px;margin-left:8px" onclick="openClientLoanBook()">📖 OPEN LOAN BOOK</button>
+  <div class="panel" style="margin-top:15px;background:#fff8fb;padding:15px">
+    <h3 style="margin:0 0 10px">💬 Borrower Messaging</h3>
+    <label>Message Template</label>
+    <select id="clientSmsTemplate" onchange="updateClientSmsPreview()">
+      <option value="payment">💰 Payment Reminder</option>
+      <option value="late">⚠️ Late Payment</option>
+      <option value="tomorrow">📅 Due Tomorrow</option>
+      <option value="received">✅ Payment Received</option>
+      <option value="renewal">🔄 Renewal Reminder</option>
+      <option value="announcement">📢 General Announcement</option>
+    </select>
+    <textarea id="clientSmsPreview" rows="4" style="width:100%;margin-top:10px" placeholder="Message preview..."></textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <button class="btn primary" onclick="sendClientSMS()">📩 SEND TEXT</button>
+      <button class="btn pink" onclick="copyClientSMS()">📋 COPY MESSAGE</button>
+    </div>
+    <div class="label" style="margin-top:8px">📱 SEND TEXT opens your phone's SMS app with the message ready. Standard SMS charges may apply. COPY MESSAGE works on phone and PC.</div>
+  </div>
+</div>
+<div class="panel" style="margin-top:15px;background:#fff8fb"><h2>📎 Client Documents</h2><div id="clientDocHint" class="label">Select a saved loan to manage ID and agreement.</div><div class="doc-grid" id="clientDocGrid"></div></div>
+</div>
+
+<div class="panel hidden" id="clientHistoryPanel" style="margin-top:15px">
+  <h2>📚 Client Loan & Payment History</h2>
+  <div id="clientHistorySummary" class="result"></div>
+  <div style="overflow:auto;margin-top:12px">
+    <table>
+      <thead><tr><th>Loan ID</th><th>Term</th><th>Principal</th><th>Total</th><th>Release</th><th>Renewal</th><th>Status</th></tr></thead>
+      <tbody id="clientLoanHistoryBody"></tbody>
+    </table>
+  </div>
+  <h3 style="margin-top:20px">💵 Payment Records</h3>
+  <div class="panel" style="margin:12px 0;background:#fff8fb;border:1px solid #efd8e8">
+    <h3 style="margin:0 0 8px">📈 Loan Limit Increase Assessment</h3>
+    <div class="label">Is this borrower eligible for a loan limit increase?</div>
+    <select id="clientIncreaseDecision" onchange="saveClientIncreaseDecision()" style="margin-top:8px">
+      <option value="PENDING REVIEW">Pending Review</option>
+      <option value="APPROVED FOR INCREASE">Approved for Increase</option>
+      <option value="NOT APPROVED">Not Approved</option>
+      <option value="REVIEW REQUIRED">Review Required</option>
+    </select>
+    <div id="clientIncreaseNote" class="label" style="margin-top:8px">Review payment history, late payments, missed payments, and penalties before approving an increase.</div>
+  </div>
+  <div style="overflow:auto">
+    <table>
+      <thead><tr><th>Loan ID</th><th>Schedule #</th><th>Scheduled</th><th>Paid</th><th>Actual Date</th><th>Penalty</th></tr></thead>
+      <tbody id="clientPaymentHistoryBody"></tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<section id="loanBook" class="hidden">
+ <div class="top loanbook-head"><div><h1 class="loanbook-title">📖 LOAN BOOK</h1><div class="label">Individual loan book for the selected borrower</div></div><div class="badge">💜 M.R LENDS</div></div>
+ <div class="panel form">
+  <label>🔎 Select Borrower / Loan</label>
+  <select id="loanBookSelect" onchange="loadLoanBook(this.value)"><option value="">Select borrower...</option></select>
+ </div>
+ <div id="loanBookContent" class="hidden">
+  <div class="panel" style="background:linear-gradient(135deg,#fff,#f6eafb);border-color:#dcc5eb">
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <div><div style="font-size:12px;color:var(--muted)">LOAN BOOK FOR</div><div id="loanBookBorrower" style="font-size:25px;font-weight:800;color:#6f4598">(Name of Borrower)</div><div id="loanBookMeta" class="label"></div></div>
+    <div style="text-align:right"><div class="label">LOAN ID</div><div id="loanBookId" style="font-weight:800"></div></div>
+   </div>
+  </div>
+  <div class="loanbook-grid grid2" style="margin-top:15px">
+   <div class="panel form"><h2>👤 Borrower Information</h2>
+    <label>Name</label><input id="lbName" readonly><label>Mobile Number</label><input id="lbMobile" readonly><label>Address</label><input id="lbAddress" readonly><label>Email</label><input id="lbEmail" readonly><label>Facebook Account</label><input id="lbFb" readonly>
+   </div>
+   <div class="panel form"><h2>💰 Loan Details</h2>
+    <label>Release Date</label><input id="lbRelease" readonly><label>Term</label><input id="lbTerm" readonly><label>Principal</label><input id="lbPrincipal" readonly><label>Interest</label><input id="lbInterest" readonly><label>Total Collectibles</label><input id="lbTotal" readonly><label>GCash Fee</label><input id="lbGcash" readonly><label>First Due Date</label><input id="lbDue" readonly>
+   </div>
+  </div>
+  <div class="panel"><h2>📊 Loan Summary</h2><div class="cards loanbook-summary">
+   <div class="card"><div class="label">Total Principal</div><div class="value" id="lbSumPrincipal">₱0.00</div></div>
+   <div class="card"><div class="label">Total Interest</div><div class="value" id="lbSumInterest">₱0.00</div></div>
+   <div class="card"><div class="label">Total Collectibles</div><div class="value" id="lbSumTotal">₱0.00</div></div>
+   <div class="card"><div class="label">Total Paid</div><div class="value" id="lbSumPaid">₱0.00</div></div>
+   <div class="card"><div class="label">Remaining Balance</div><div class="value" id="lbSumRemaining">₱0.00</div></div>
+   <div class="card"><div class="label">Total Penalties</div><div class="value" id="lbSumPenalty">₱0.00</div></div>
+  </div></div>
+  <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2>📅 Payment Schedule</h2><div class="label">₱20/day late penalty</div></div>
+   <div class="loanbook-wrap"><table class="loanbook-table"><thead><tr><th>#</th><th>Scheduled Due Date</th><th>Actual Payment Date</th><th>Scheduled</th><th>Paid</th><th>Days Late</th><th>Penalty</th><th>Status</th><th>Note</th></tr></thead><tbody id="loanBookScheduleBody"></tbody></table></div>
+  </div>
+  <div class="panel" style="background:#fff8fb"><h2>📎 Secure Document Vault</h2><div class="label">ID, agreement and other borrower documents attached to this loan.</div><div class="doc-grid" id="loanBookDocGrid"></div></div>
+  <div class="panel loanbook-actions" style="display:flex;justify-content:flex-end;gap:10px"><button class="btn primary" onclick="openSelectedLoanPayment()">💵 RECORD PAYMENT</button><button class="btn pink" onclick="window.print()">🖨️ PRINT LOAN BOOK</button></div>
+ </div>
+</section>
+
+<section id="loan" class="hidden">
+ <div class="top"><div><h1>💰 New Loan / Data Entry</h1><div class="label">Fill up the client and loan information, then save the complete record.</div></div><div class="badge">📝 New Record</div></div>
+ <div class="panel form">
+  <h2>👤 Borrower Information</h2>
+  <div class="grid2">
+   <div><label>Full Name *</label><input id="clientName" placeholder="Enter client's full name"></div>
+   <div><label>Mobile Number *</label><input id="clientMobile" placeholder="09XXXXXXXXX"></div>
+   <div><label>Address</label><input id="clientAddress" placeholder="Complete address"></div>
+   <div><label>Email Address</label><input id="clientEmail" type="email" placeholder="Optional"></div>
+   <div><label>Facebook Account</label><input id="clientFB" placeholder="Facebook name / profile"></div>
+   <div><label>Emergency Contact</label><input id="emergencyContact" placeholder="Name and mobile number"></div>
+  </div>
+
+  <h2 style="margin-top:25px">💰 Loan Information</h2>
+  <div class="grid2">
+   <div><label>Principal Amount *</label><input id="principal" type="number" min="0" placeholder="₱0.00" oninput="calc();makeSchedule()"></div>
+   <div><label>Loan Term *</label><select id="term" onchange="calc();makeSchedule();autoRenewalDate()"><option value="1|10">1 WEEK</option><option value="4|15">4 WEEKS</option><option value="5|20">5 WEEKS</option><option value="7|25">7 WEEKS</option><option value="8|30">8 WEEKS</option><option value="0|0">FOREVER</option></select></div>
+   <div><label>Loan Release Date *</label><input id="loanReleaseDate" type="date" onchange="autoRenewalDate()"></div>
+   <div><label>First Due Date *</label><input id="firstDue" type="date" onchange="makeSchedule()"></div>
+   <div><label>Loan Purpose</label><input id="loanPurpose" placeholder="Optional"></div>
+   <div><label>Loan Notes</label><input id="loanNotes" placeholder="Optional notes"></div>
+  </div>
+  <div class="result">
+   Interest: <b id="interest">₱0.00</b> &nbsp; • &nbsp;
+   GCash Fee: <b id="gcash">₱0.00</b> &nbsp; • &nbsp;
+   Total Collectible: <b id="total">₱0.00</b>
+  </div>
+  <div class="label" style="margin-top:10px">GCash fee: ₱15 per ₱500 released (₱500=₱15 • ₱1,000=₱30 • ₱1,500=₱45)</div>
+
+  <div class="panel" style="margin-top:18px;background:#fff8fb">
+   <h2>🔄 Loan / Renewal Schedule</h2>
+   <div class="grid2">
+    <div><label>Renewal / Next Loan Date</label><input id="newLoanRenewalDate" type="date"></div>
+    <div><label>Renewal Status</label><select id="newLoanRenewalStatus"><option>Scheduled</option><option>For Renewal</option><option>Renewed</option><option>Completed</option></select></div>
+   </div>
+   <div class="label">The suggested renewal date is automatically calculated from the release date and selected term. You can change it before saving.</div>
+  </div>
+
+  <div class="panel" style="margin-top:18px;background:#fff8fb">
+   <h2>📅 Payment Schedule</h2>
+   <div class="grid2 form">
+    <div><label>Weekly Payment</label><input id="weeklyPay" readonly placeholder="₱0.00"></div>
+    <div><label>Payment Frequency</label><input value="Weekly / Every 7 Days" readonly></div>
+   </div>
+   <div style="overflow:auto;margin-top:12px"><table><thead><tr><th>#</th><th>Due Date</th><th>Scheduled Amount</th><th>Status</th></tr></thead><tbody id="scheduleBody"><tr><td colspan="4" style="text-align:center;color:#888">Enter principal and due date.</td></tr></tbody></table></div>
+  </div>
+
+  <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+   <button class="btn primary" onclick="saveLoan()">💾 SAVE NEW LOAN</button>
+   <button class="btn pink" onclick="clearLoanForm()">🧹 CLEAR FORM</button>
+  </div>
+ </div>
+</section>
+
+<section id="payment" class="hidden">
+ <div class="top"><div><h1>💵 Record Payment</h1><div class="label">Record a client payment</div></div></div>
+ <div class="panel form"><label>Client / Loan</label><select id="paymentLoan" onchange="loadPaymentSchedule()"><option value="">Select client / loan...</option></select><div class="select-help">💡 Format: CLIENT • TERM • WEEKLY AMOUNT • Loan ID</div><div id="paymentSummary" class="result" style="margin-top:12px">Select a loan to view its balance and schedule.</div><label>Scheduled Payment</label><select id="schedulePayment" onchange="syncPaymentAmount()"><option value="">Select scheduled payment...</option></select><div style="overflow:auto;margin-top:12px"><table><thead><tr><th>#</th><th>Due</th><th>Scheduled</th><th>Paid</th><th>Status</th></tr></thead><tbody id="paymentScheduleBody"><tr><td colspan="5" style="text-align:center;color:#888">Select a loan.</td></tr></tbody></table></div><label>Amount Paid</label><input id="paymentAmount" type="number" min="0" placeholder="₱0.00"><label>Actual Payment Date</label><input id="payDate" type="date"><label>Payment Note</label><input id="paymentNote" placeholder="Optional note"><label>Days Late</label><input id="daysLate" type="number" min="0" value="0" oninput="calcPenalty()"><div class="result">⚠️ Late penalty: <b id="penaltyAmount">₱0.00</b> <span class="label">• ₱20/day</span></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:15px"><button class="btn primary" onclick="savePayment()">💾 Save Payment</button><button class="btn pink" onclick="sendPaymentReminderSMS()">📩 TEXT REMINDER</button></div></div>
+</section>
+
+<section id="documents" class="hidden">
+ <div class="top"><div><h1>🪪 Document Vault</h1><div class="label">ID, loan agreement and borrower documents</div></div><div class="badge">🔐 Local secure vault</div></div>
+ <div class="panel form"><label>🔎 Select Borrower / Loan</label><select id="documentLoanSelect" onchange="loadDocumentManager(this.value)"><option value="">Select loan...</option></select><div class="select-help">📱 On Android you can use the camera option. 🖥️ On PC you can upload a file.</div></div>
+ <div id="documentManager" class="hidden">
+  <div class="panel"><h2>📎 Upload Documents</h2><div class="desktop-grid">
+   <div class="doc-card"><h3>🪪 Valid ID</h3><input id="idFile" type="file" accept="image/*,application/pdf" capture="environment" onchange="saveSelectedDocument('id',this)"><div id="idDocStatus" class="label">No ID uploaded.</div></div>
+   <div class="doc-card"><h3>📝 Loan Agreement</h3><input id="agreementFile" type="file" accept="image/*,application/pdf" capture="environment" onchange="saveSelectedDocument('agreement',this)"><div id="agreementDocStatus" class="label">No agreement uploaded.</div></div>
+   <div class="doc-card"><h3>📸 Other Document</h3><input id="otherFile" type="file" accept="image/*,application/pdf" capture="environment" onchange="saveSelectedDocument('other',this)"><div id="otherDocStatus" class="label">Optional.</div></div>
+  </div></div>
+  <div class="panel"><h2>📂 Saved Documents</h2><div id="documentGrid" class="doc-grid"></div></div>
+ </div>
+</section>
+
+<section id="termDash" class="hidden">
+ <div class="top"><div><h1>📊 Term Dashboard</h1><div class="label">Performance by loan term</div></div></div>
+ <div id="termDashboardCards"></div>
+</section>
+
+<section id="receipt" class="hidden">
+ <div class="top screen-only"><div><h1>🧾 Receipts</h1><div class="label">Professional purple printable loan and payment receipts</div></div><div class="badge">💜 PRINT READY</div></div>
+ <div class="panel receipt-selector screen-only form">
+   <h2>🧾 Loan Release Receipt</h2>
+   <label>Select Saved Loan</label>
+   <select id="receiptLoan" onchange="loadReceipt()"><option value="">Select loan...</option></select>
+ </div>
+ <div class="receipt-paper">
+   <div class="receipt-brand"><div class="brand-name">💜 M.R LENDS</div><div class="brand-sub">CASH LOAN RELEASE RECEIPT</div></div>
+   <div class="grid2 form">
+     <div><label>Loan ID</label><input id="rLoanId" readonly></div>
+     <div><label>Release Date</label><input id="rDate" readonly></div>
+     <div><label>Client</label><input id="rClient" readonly></div>
+     <div><label>Term</label><input id="rTerm" readonly></div>
+     <div><label>Principal</label><input id="rPrincipal" readonly></div>
+     <div><label>Interest</label><input id="rInterest" readonly></div>
+     <div><label>GCash Fee</label><input id="rGcash" readonly></div>
+     <div><label>Total Collectible</label><input id="rTotal" readonly></div>
+   </div>
+   <hr class="receipt-divider">
+   <h2>📅 Payment Schedule</h2>
+   <div style="overflow:auto"><table><thead><tr><th>#</th><th>Due Date</th><th>Actual Payment Date</th><th>Amount</th></tr></thead><tbody id="receiptSchedule"><tr><td colspan="4" style="text-align:center;color:#888">Select a saved loan.</td></tr></tbody></table></div>
+   <div class="receipt-total" style="margin-top:18px"><div class="label">TOTAL TO BE COLLECTED</div><div class="amount" id="rTotalBig">₱0.00</div></div>
+   <div style="display:flex;justify-content:space-between;gap:20px;margin-top:45px;font-size:12px"><div style="width:45%;border-top:1px solid #777;padding-top:7px;text-align:center">Borrower Signature</div><div style="width:45%;border-top:1px solid #777;padding-top:7px;text-align:center">M.R LENDS Representative</div></div>
+ </div>
+ <div class="panel receipt-selector screen-only form" style="margin-top:22px">
+   <h2>💵 Payment Receipt</h2>
+   <label>Select Loan</label>
+   <select id="paymentReceiptLoan" onchange="renderPaymentReceiptOptions()"><option value="">Select loan...</option></select>
+   <label>Select Payment</label>
+   <select id="paymentReceiptPayment" onchange="loadPaymentReceipt()"><option value="">Select payment...</option></select>
+   <button class="btn primary" style="margin-top:14px" onclick="window.print()">🖨️ Print Payment Receipt</button>
+ </div>
+ <div class="receipt-paper" id="paymentReceiptPaper">
+   <div class="receipt-brand"><div class="brand-name">💜 M.R LENDS</div><div class="brand-sub">OFFICIAL PAYMENT RECEIPT</div></div>
+   <div class="grid2 form">
+     <div><label>Receipt No.</label><input id="prReceiptNo" readonly></div>
+     <div><label>Payment Date</label><input id="prDate" readonly></div>
+     <div><label>Client</label><input id="prClient" readonly></div>
+     <div><label>Loan ID</label><input id="prLoanId" readonly></div>
+     <div><label>Term</label><input id="prTerm" readonly></div>
+     <div><label>Payment No.</label><input id="prSchedule" readonly></div>
+     <div><label>Scheduled Amount</label><input id="prScheduled" readonly></div>
+     <div><label>Amount Paid</label><input id="prAmount" readonly></div>
+     <div><label>Days Late</label><input id="prDaysLate" readonly></div>
+     <div><label>Penalty</label><input id="prPenalty" readonly></div>
+   </div>
+   <div class="receipt-total" style="margin-top:18px"><div class="label">TOTAL PAYMENT RECEIVED</div><div class="amount" id="prTotal">₱0.00</div></div>
+   <div style="margin-top:18px;background:#fff8fb;border:1px solid #eadff0;border-radius:12px;padding:13px"><b>Payment Note:</b> <span id="prNote">—</span></div>
+   <div style="display:flex;justify-content:space-between;gap:20px;margin-top:45px;font-size:12px"><div style="width:45%;border-top:1px solid #777;padding-top:7px;text-align:center">Borrower Signature</div><div style="width:45%;border-top:1px solid #777;padding-top:7px;text-align:center">M.R LENDS Representative</div></div>
+ </div>
+ <div class="screen-only" style="display:flex;justify-content:center;gap:10px;margin:18px 0"><button class="btn primary" onclick="window.print()">🖨️ PRINT RECEIPTS</button></div>
+</section>
+
+<section id="history" class="hidden">
+ <div class="top"><div><h1>📚 Loan History</h1><div class="label">Search, filter, and review saved loan records</div></div></div>
+ <div class="panel">
+  <div class="grid2" style="margin-bottom:14px">
+   <div><label>🔎 Search Client / Loan ID</label><input id="historySearch" placeholder="Type client name or Loan ID..." oninput="renderHistory()"></div>
+   <div><label>📋 Filter Term / Status</label><select id="historyFilter" onchange="renderHistory()"><option value="ALL">All Records</option><option value="1">1 WEEK</option><option value="4">4 WEEKS</option><option value="5">5 WEEKS</option><option value="7">7 WEEKS</option><option value="8">8 WEEKS</option><option value="0">FOREVER</option><option value="ACTIVE">Active Only</option><option value="COMPLETED">Completed Only</option></select></div>
+  </div>
+  <div id="historyCount" class="label" style="margin-bottom:10px"></div>
+  <div style="overflow:auto"><table><thead><tr><th>Loan ID</th><th>Client</th><th>Term</th><th>Principal</th><th>Total</th><th>Release</th><th>Renewal</th><th>Status</th></tr></thead><tbody id="historyBody"><tr><td colspan="8" style="text-align:center;color:#888">No loan records yet.</td></tr></tbody></table></div>
+ </div>
+</section>
+
+<section id="reports" class="hidden">
+ <div class="top"><div><h1>📈 Reports & Income</h1><div class="label">One-screen summary of lending activity</div></div></div>
+ <div class="cards">
+  <div class="card"><div class="icon">💰</div><div class="label">Principal Released</div><div class="value" id="repPrincipal">₱0.00</div></div>
+  <div class="card"><div class="icon">💵</div><div class="label">Payments Collected</div><div class="value" id="repPayments">₱0.00</div></div>
+  <div class="card"><div class="icon">💜</div><div class="label">Interest Income</div><div class="value" id="repInterest">₱0.00</div></div>
+  <div class="card"><div class="icon">📱</div><div class="label">GCash Fees</div><div class="value" id="repGcash">₱0.00</div></div>
+  <div class="card"><div class="icon">⚠️</div><div class="label">Penalty Income</div><div class="value" id="repPenalty">₱0.00</div></div>
+  <div class="card"><div class="icon">📈</div><div class="label">Net Income</div><div class="value" id="repNet">₱0.00</div></div>
+ </div>
+ <div class="panel"><h2>📊 By Term</h2><div style="overflow:auto"><table><thead><tr><th>Term</th><th>Loans</th><th>Principal</th><th>Interest</th><th>GCash</th><th>Payments</th><th>Penalty</th><th>Net Income</th></tr></thead><tbody id="reportTermBody"></tbody></table></div></div>
+ <div class="panel"><h2>📅 Daily Collection Summary</h2><div style="overflow:auto"><table><thead><tr><th>Date</th><th>Payments</th><th>Penalty</th><th>Total Collected</th></tr></thead><tbody id="reportDailyBody"></tbody></table></div></div>
+ <button class="btn primary" onclick="exportCSV()">⬇️ EXPORT REPORT CSV</button>
+</section>
+
+<section id="cloud" class="hidden">
+ <div class="top"><div><h1>☁️ Cloud & Security</h1><div class="label">Optional shared phone + PC setup</div></div><div class="badge">🔐 Private storage recommended</div></div>
+ <div class="panel form"><h2>☁️ Supabase Connection</h2><div class="label">Enter your own Supabase project URL and anon key. Do not put a service-role key in this app.</div><label>Project URL</label><input id="sbUrl" placeholder="https://YOURPROJECT.supabase.co"><label>Anon Public Key</label><input id="sbKey" type="password" placeholder="eyJ..."><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" onclick="connectCloud()">☁️ Connect</button><button class="btn pink" onclick="cloudSignIn()">🔐 Sign In</button><button class="btn back" onclick="cloudSignOut()">Sign Out</button><button class="btn primary" onclick="syncAllToCloud()">⬆️ Upload Records</button><button class="btn pink" onclick="pullCloudData()">⬇️ Download Records</button></div><div id="cloudStatus" class="label" style="margin-top:12px">Not connected.</div></div>
+ <div class="panel"><h2>🛡️ Important</h2><p class="label">For true phone + PC sharing and permanent documents, create private Supabase tables/storage and enable Row Level Security. The current GitHub Pages app never receives a service-role secret.</p></div>
+</section>
+
+<section id="backup" class="hidden">
+ <div class="top"><div><h1>🛡️ Backup & Tools</h1><div class="label">Keep your records safe and manage your local data</div></div></div>
+ <div class="panel"><h2>💾 Backup</h2><p class="label">Download a complete JSON backup of loans, payments, renewals, and client information.</p><button class="btn primary" onclick="downloadBackup()">⬇️ DOWNLOAD FULL BACKUP</button> <button class="btn pink" onclick="document.getElementById('restoreFile').click()">♻️ RESTORE BACKUP</button><input id="restoreFile" type="file" accept="application/json" style="display:none" onchange="restoreBackup(event)"></div>
+ <div class="panel"><h2>🧹 Data Tools</h2><p class="label">Use carefully. These actions affect records stored in this browser.</p><button class="btn back" onclick="refreshAll()">🔄 REFRESH ALL</button> <button class="btn" style="background:#fde1e7;color:#9b4058" onclick="clearAllData()">⚠️ CLEAR ALL LOCAL DATA</button></div>
+ <div class="panel"><h2>📦 Record Counts</h2><div id="backupCounts" class="result">Loading...</div></div>
+ <div class="panel"><h2>✨ Added in V2</h2><p class="label">🖥️ PC landscape layout • 📱 phone portrait layout • 🔎 clearer loan selector with term + weekly amount • 🛡️ duplicate/overpayment protection • ⚡ dashboard quick actions.</p></div>
+ <div class="panel"><h2>ℹ️ Important</h2><p class="label">This version stores records in the browser/device. The backup file is the safety copy. A future cloud/database setup is needed for automatic sharing between multiple phones or PCs.</p></div>
+</section>
+</main>
+</div>
+
+<script>
+const MR_DOC_DB='mr_lends_documents_v1';
+let sbClient=null;
+function openDocDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(MR_DOC_DB,1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains('docs')){const st=db.createObjectStore('docs',{keyPath:'key'});st.createIndex('loanId','loanId');}};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+async function putDoc(rec){const db=await openDocDB();return new Promise((resolve,reject)=>{const tx=db.transaction('docs','readwrite');tx.objectStore('docs').put(rec);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+async function getDocs(loanId){const db=await openDocDB();return new Promise((resolve,reject)=>{const tx=db.transaction('docs','readonly');const req=tx.objectStore('docs').index('loanId').getAll(loanId);req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});}
+async function deleteDoc(key){const db=await openDocDB();return new Promise((resolve,reject)=>{const tx=db.transaction('docs','readwrite');tx.objectStore('docs').delete(key);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function docLabel(type){return type==='id'?'🪪 Valid ID':type==='agreement'?'📝 Loan Agreement':'📸 Other Document';}
+function docUrl(doc){return URL.createObjectURL(doc.blob);}
+async function saveSelectedDocument(type,input){const loanId=document.getElementById('documentLoanSelect')?.value||document.getElementById('loanBookSelect')?.value;const file=input.files?.[0];if(!loanId||!file)return;const key=loanId+'::'+type;await putDoc({key,loanId,type,name:file.name,size:file.size,mime:file.type,blob:file,updatedAt:new Date().toISOString()});if(sbClient){const user=await cloudUser();if(user){const path=user.id+'/'+loanId+'/'+type+'-'+Date.now()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const up=await sbClient.storage.from('mr-lends-documents').upload(path,file,{upsert:false});if(!up.error){await sbClient.from('mr_lends_documents').upsert({user_id:user.id,loan_id:loanId,doc_type:type,file_name:file.name,storage_path:path,mime_type:file.type},{onConflict:'user_id,loan_id,doc_type'});}}}input.value='';await renderDocumentsForLoan(loanId);alert(docLabel(type)+' saved for this loan.');}
+async function renderDocumentsForLoan(loanId,targetId='documentGrid'){const target=document.getElementById(targetId);if(!target)return;const docs=await getDocs(loanId);let html=docs.length?docs.map(d=>{const url=docUrl(d);const isImg=(d.mime||'').startsWith('image/');return `<div class="doc-card">${isImg?`<img class="doc-thumb" src="${url}" alt="${d.name}">`:`<div class="doc-thumb" style="display:flex;align-items:center;justify-content:center;font-size:55px">📄</div>`}<div style="font-weight:700;margin-top:10px">${docLabel(d.type)}</div><div class="label">${d.name}</div><div class="doc-actions"><button class="btn primary" onclick="openStoredDoc('${d.key}')">👁️ View</button><button class="btn pink" onclick="downloadStoredDoc('${d.key}')">⬇️ Download</button><button class="btn back" onclick="removeStoredDoc('${d.key}','${loanId}')">🗑️ Delete</button></div></div>`}).join(''):'<div class="label">No documents uploaded on this device yet.</div>';if(sbClient){const user=await cloudUser();if(user){const q=await sbClient.from('mr_lends_documents').select('loan_id,doc_type,file_name,storage_path,mime_type').eq('user_id',user.id).eq('loan_id',loanId);if(!q.error&&q.data?.length){html+=q.data.map(d=>`<div class="doc-card"><div class="doc-thumb" style="display:flex;align-items:center;justify-content:center;font-size:55px">☁️</div><div style="font-weight:700;margin-top:10px">${docLabel(d.doc_type)} • Cloud</div><div class="label">${d.file_name}</div><div class="doc-actions"><button class="btn primary" onclick="openRemoteDoc('${encodeURIComponent(d.storage_path)}')">👁️ View</button><button class="btn pink" onclick="downloadRemoteDoc('${encodeURIComponent(d.storage_path)}','${encodeURIComponent(d.file_name)}')">⬇️ Download</button><button class="btn back" onclick="removeRemoteDoc('${encodeURIComponent(d.storage_path)}','${loanId}','${d.doc_type}')">🗑️ Delete</button></div></div>`).join('');}}}target.innerHTML=html;}
+async function openRemoteDoc(encoded){if(!sbClient)return;const path=decodeURIComponent(encoded);const {data,error}=await sbClient.storage.from('mr-lends-documents').createSignedUrl(path,3600);if(error){alert('Unable to open cloud document: '+error.message);return;}window.open(data.signedUrl,'_blank');}
+async function downloadRemoteDoc(encoded,name){if(!sbClient)return;const path=decodeURIComponent(encoded);const {data,error}=await sbClient.storage.from('mr-lends-documents').createSignedUrl(path,3600);if(error){alert('Unable to download cloud document: '+error.message);return;}const a=document.createElement('a');a.href=data.signedUrl;a.download=decodeURIComponent(name||'document');a.target='_blank';a.click();}
+async function removeRemoteDoc(encoded,loanId,type){if(!confirm('Delete this cloud document?'))return;if(!sbClient)return;const path=decodeURIComponent(encoded);await sbClient.storage.from('mr-lends-documents').remove([path]);await sbClient.from('mr_lends_documents').delete().eq('loan_id',loanId).eq('doc_type',type);await renderDocumentsForLoan(loanId);}
+async function openStoredDoc(key){const db=await openDocDB();const d=await new Promise((resolve,reject)=>{const r=db.transaction('docs','readonly').objectStore('docs').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});if(d)window.open(docUrl(d),'_blank');}
+async function downloadStoredDoc(key){const db=await openDocDB();const d=await new Promise((resolve,reject)=>{const r=db.transaction('docs','readonly').objectStore('docs').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});if(!d)return;const a=document.createElement('a');a.href=docUrl(d);a.download=d.name||'document';a.click();}
+async function removeStoredDoc(key,loanId){if(!confirm('Delete this document from this device?'))return;await deleteDoc(key);await renderDocumentsForLoan(loanId);}
+function renderDocumentLoans(){const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');const s=document.getElementById('documentLoanSelect');if(!s)return;s.innerHTML='<option value="">Select loan...</option>'+loans.slice().reverse().map(x=>{const term=Number(x.weeks)===0?'FOREVER':x.weeks+' WEEK'+(Number(x.weeks)>1?'S':'');const w=Number(x.weeks)>0?Number(x.total||0)/Number(x.weeks):0;return `<option value="${x.id}">${x.name||'Unnamed'} • ${term} • ${w?money(w)+'/wk':'No regular payment'} • ${x.id}</option>`}).join('');}
+async function loadDocumentManager(loanId){const m=document.getElementById('documentManager');if(!m)return;if(!loanId){m.classList.add('hidden');return}m.classList.remove('hidden');await renderDocumentsForLoan(loanId);const docs=await getDocs(loanId);['id','agreement','other'].forEach(t=>{const e=document.getElementById(t==='id'?'idDocStatus':t==='agreement'?'agreementDocStatus':'otherDocStatus');if(e)e.textContent=docs.some(d=>d.type===t)?'✅ Document saved':'No document uploaded.';});}
+async function renderClientDocs(loanId){if(loanId)await renderDocumentsForLoan(loanId,'clientDocGrid');}
+async function renderLoanBookDocs(loanId){if(loanId)await renderDocumentsForLoan(loanId,'loanBookDocGrid');}
+function syncPaymentAmount(){const s=document.getElementById('schedulePayment'),a=document.getElementById('paymentAmount');if(!s||!a)return;const loanId=document.getElementById('paymentLoan')?.value;const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');const loan=loans.find(x=>x.id===loanId);if(!loan||!s.value){a.value='';return;}const r=getLoanSchedule(loan).find(x=>x.no===Number(s.value));const pays=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');const paid=pays.filter(x=>x.loan===loanId&&Number(x.schedule)===Number(s.value)).reduce((q,x)=>q+Number(x.amount||0),0);a.value=Math.max(0,(r?.amount||0)-paid).toFixed(2);}
+function cloudStatus(msg,cls=''){const e=document.getElementById('cloudStatus');if(e){e.className='label '+cls;e.textContent=msg;}}
+function loadCloudConfig(){try{const c=JSON.parse(localStorage.getItem('mr_lends_cloud')||'null');if(c){const u=document.getElementById('sbUrl'),k=document.getElementById('sbKey');if(u)u.value=c.url||'';if(k)k.value=c.key||'';}}catch(e){}}
+function currentClientLoanForMessaging(){
+ const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ const slot=Number(document.getElementById('clientDetail')?.dataset.slot||0);
+ if(slot){ const t=getTermBySlot(slot); const candidates=loans.filter(x=>Number(x.slot)===slot); if(candidates.length) return candidates[candidates.length-1]; }
+ const name=(document.getElementById('detailName')?.value||'').trim().toLowerCase();
+ const mobile=(document.getElementById('detailMobile')?.value||'').trim();
+ return loans.find(x=>(mobile&&x.mobile===mobile)||(name&&String(x.name||'').trim().toLowerCase()===name))||null;
+}
+function smsMoney(v){return money(Number(v||0));}
+function buildClientSMS(type,loan){
+ const name=loan?.name || document.getElementById('detailName')?.value || 'Borrower';
+ const weekly=loan&&Number(loan.weeks)>0?Number(loan.total||0)/Number(loan.weeks):0;
+ const due=loan?.firstDueDate?new Date(loan.firstDueDate).toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'}):'your scheduled date';
+ const renewal=loan?.renewalDate?new Date(loan.renewalDate).toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'}):'your renewal date';
+ switch(type){
+  case 'late': return `Hello ${name}, ⚠️ reminder po from M.R LENDS. Your scheduled payment of ${smsMoney(weekly)} is overdue. Please settle it as soon as possible. To avoid late or missed-payment penalties, kindly make your payment on or before the due date. Thank you for your cooperation — M.R LENDS 💜`;
+  case 'tomorrow': return `Hello ${name}, 📅 reminder po from M.R LENDS. Your payment of ${smsMoney(weekly)} is due tomorrow. Please prepare your payment on time to avoid late or missed-payment penalties. Thank you — M.R LENDS 💜`;
+  case 'received': return `Hello ${name}, ✅ we received your payment of ${smsMoney(document.getElementById('paymentAmount')?.value||0)}. Thank you for paying with M.R LENDS 💜`;
+  case 'renewal': return `Hello ${name}, 🔄 your M.R LENDS loan is scheduled for renewal on ${renewal}. Please message us if you would like to renew. Thank you — M.R LENDS 💜`;
+  case 'announcement': return `Hello ${name}, 📢 M.R LENDS has an important announcement. Please message us for details. Thank you — M.R LENDS 💜`;
+  default: return `Hello ${name}, 💰 reminder po from M.R LENDS. Your weekly payment of ${smsMoney(weekly)} is due on ${due}. Kindly avoid late or missed payments to prevent applicable penalties and to keep your payment record in good standing. Thank you — M.R LENDS 💜`;
+ }
+}
+function updateClientSmsPreview(){
+ const loan=currentClientLoanForMessaging(); const type=document.getElementById('clientSmsTemplate')?.value||'payment'; const box=document.getElementById('clientSmsPreview'); if(box) box.value=buildClientSMS(type,loan);
+}
+function sendClientSMS(){
+ const loan=currentClientLoanForMessaging(); const mobile=(loan?.mobile||document.getElementById('detailMobile')?.value||'').replace(/[^0-9+]/g,'');
+ const box=document.getElementById('clientSmsPreview'); if(!mobile){alert('Please save the borrower mobile number first.');return;} if(!box?.value.trim())updateClientSmsPreview(); const msg=encodeURIComponent(box?.value||''); const clean=mobile.startsWith('+')?mobile:'+'+mobile.replace(/^0/,'63'); window.location.href=`sms:${clean}?body=${msg}`;
+}
+async function copyClientSMS(){
+ const box=document.getElementById('clientSmsPreview'); if(!box)return; if(!box.value.trim())updateClientSmsPreview(); try{await navigator.clipboard.writeText(box.value);alert('Message copied. You can paste it into Messenger, SMS, or another chat app.');}catch(e){box.select();document.execCommand('copy');alert('Message copied.');}
+}
+function sendPaymentReminderSMS(){
+ const loanId=document.getElementById('paymentLoan')?.value; const loan=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]').find(x=>x.id===loanId); if(!loan){alert('Select a client / loan first.');return;} const mobile=(loan.mobile||'').replace(/[^0-9+]/g,''); if(!mobile){alert('This borrower has no mobile number saved.');return;} const amount=document.getElementById('paymentAmount')?.value||0; const msg=encodeURIComponent(`Hello ${loan.name||'Borrower'}, 💰 reminder po from M.R LENDS. Your scheduled payment is ${smsMoney(amount||((Number(loan.total)||0)/(Number(loan.weeks)||1)))}. Kindly avoid late or missed payments to prevent applicable penalties. Thank you — M.R LENDS 💜`); const clean=mobile.startsWith('+')?mobile:'+'+mobile.replace(/^0/,'63'); window.location.href=`sms:${clean}?body=${msg}`;
+}
+
+function connectCloud(){const url=document.getElementById('sbUrl').value.trim().replace(/\/$/,'');const key=document.getElementById('sbKey').value.trim();if(!url||!key){cloudStatus('Enter Project URL and anon public key.','cloud-warn');return;}if(!window.supabase){cloudStatus('Supabase library did not load.','cloud-bad');return;}sbClient=window.supabase.createClient(url,key);localStorage.setItem('mr_lends_cloud',JSON.stringify({url,key}));cloudStatus('☁️ Connected. Sign in to use private cloud records and documents.','cloud-ok');}
+async function cloudSignIn(){if(!sbClient)connectCloud();if(!sbClient)return;const email=prompt('M.R LENDS cloud email:');const password=prompt('Password:');if(!email||!password)return;const {error}=await sbClient.auth.signInWithPassword({email,password});if(error)cloudStatus('Sign in failed: '+error.message,'cloud-bad');else cloudStatus('🔐 Signed in. You can now upload/download records.','cloud-ok');}
+async function cloudSignOut(){if(sbClient)await sbClient.auth.signOut();cloudStatus('Signed out.','cloud-warn');}
+async function cloudUser(){if(!sbClient)return null;const {data}=await sbClient.auth.getUser();return data?.user||null;}
+async function syncAllToCloud(){if(!sbClient)connectCloud();const user=await cloudUser();if(!user){cloudStatus('Connect and sign in first.','cloud-warn');return;}const d=allData();const rows=[];d.loans.forEach(x=>rows.push({user_id:user.id,record_key:'loan:'+x.id,record_type:'loan',data:x}));d.payments.forEach(x=>rows.push({user_id:user.id,record_key:'payment:'+x.id,record_type:'payment',data:x}));d.renewals.forEach(x=>rows.push({user_id:user.id,record_key:'renewal:'+x.loan,record_type:'renewal',data:x}));const {error}=await sbClient.from('mr_lends_records').upsert(rows,{onConflict:'user_id,record_key'});if(error){cloudStatus('Upload failed: '+error.message,'cloud-bad');return;}cloudStatus('☁️ Records uploaded successfully.','cloud-ok');}
+async function pullCloudData(){if(!sbClient)connectCloud();const user=await cloudUser();if(!user){cloudStatus('Connect and sign in first.','cloud-warn');return;}const {data,error}=await sbClient.from('mr_lends_records').select('record_type,data').eq('user_id',user.id);if(error){cloudStatus('Download failed: '+error.message,'cloud-bad');return;}const loans=(data||[]).filter(r=>r.record_type==='loan').map(r=>r.data);const payments=(data||[]).filter(r=>r.record_type==='payment').map(r=>r.data);const renewals=(data||[]).filter(r=>r.record_type==='renewal').map(r=>r.data);if(!confirm('Replace this browser\'s records with the cloud copy?'))return;localStorage.setItem('mr_lends_loans',JSON.stringify(loans));localStorage.setItem('mr_lends_payments',JSON.stringify(payments));localStorage.setItem('mr_lends_renewals',JSON.stringify(renewals));refreshAll();cloudStatus('⬇️ Cloud records downloaded to this device.','cloud-ok');}
+function loadReceipt(){
+ let id=document.getElementById('receiptLoan').value;
+ if(!id)return;
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let x=loans.find(v=>v.id===id); if(!x)return;
+ let interest=x.principal*x.rate/100;
+ const set=(id,val)=>document.getElementById(id).value=val;
+ set('rLoanId',x.id);set('rDate',new Date(x.date).toLocaleDateString('en-PH'));set('rClient',x.name);
+ set('rTerm',(Number(x.weeks)===0?'FOREVER':x.weeks+' WEEK'+(x.weeks>1?'S':'')));set('rPrincipal','₱'+x.principal.toLocaleString('en-PH',{minimumFractionDigits:2}));
+ set('rInterest','₱'+interest.toLocaleString('en-PH',{minimumFractionDigits:2}));
+ set('rGcash','₱'+Number(x.gcash||0).toLocaleString('en-PH',{minimumFractionDigits:2}));
+ set('rTotal','₱'+x.total.toLocaleString('en-PH',{minimumFractionDigits:2}));
+ document.getElementById('rTotalBig').textContent='₱'+x.total.toLocaleString('en-PH',{minimumFractionDigits:2});
+ let d=new Date((x.firstDue||x.date).slice(0,10)+'T00:00:00');let weekly=x.total/x.weeks, rows='';
+ let payments=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ for(let i=1;i<=x.weeks;i++){let dd=new Date(d);dd.setDate(d.getDate()+((i-1)*7));let pp=payments.filter(v=>v.loan===x.id&&Number(v.schedule)===i);let actual=pp.length?pp[pp.length-1].date:'—';rows+=`<tr><td>${i}</td><td>${dd.toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'})}</td><td>${actual}</td><td>₱${weekly.toLocaleString('en-PH',{minimumFractionDigits:2})}</td></tr>`;}
+ document.getElementById('receiptSchedule').innerHTML=rows;
+}
+function renderPaymentReceiptOptions(){
+ const loanId=document.getElementById('paymentReceiptLoan')?.value;
+ const select=document.getElementById('paymentReceiptPayment'); if(!select)return;
+ const pays=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]').filter(x=>x.loan===loanId||x.loanId===loanId);
+ select.innerHTML='<option value="">Select payment...</option>'+pays.slice().reverse().map(x=>`<option value="${x.id}">${x.id} • Schedule #${x.schedule||x.scheduleNo||'—'} • ${money(x.amount||x.paidAmount||0)} • ${x.actualDate||x.paymentDate||x.date||''}</option>`).join('');
+ if(pays.length)loadPaymentReceipt();
+}
+function loadPaymentReceipt(){
+ const pid=document.getElementById('paymentReceiptPayment')?.value; if(!pid)return;
+ const pays=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ const p=pays.find(x=>x.id===pid); if(!p)return;
+ const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ const loan=loans.find(x=>x.id===(p.loan||p.loanId)); if(!loan)return;
+ const set=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val;};
+ const term=Number(loan.weeks)===0?'FOREVER':loan.weeks+' WEEK'+(Number(loan.weeks)>1?'S':'');
+ set('prReceiptNo',p.id||'PAY-'+Date.now());
+ set('prDate',p.actualDate||p.paymentDate||p.date||'—');
+ set('prClient',loan.name||'Borrower');
+ set('prLoanId',loan.id||'—');
+ set('prTerm',term);
+ set('prSchedule','Schedule #'+(p.schedule||p.scheduleNo||'—'));
+ set('prScheduled',money(p.scheduled||p.scheduledAmount||((Number(loan.total||0)/Number(loan.weeks||1)))));
+ set('prAmount',money(p.amount||p.paidAmount||0));
+ set('prDaysLate',String(p.daysLate||0));
+ set('prPenalty',money(p.penalty||0));
+ const total=document.getElementById('prTotal');if(total)total.textContent=money(p.amount||p.paidAmount||0);
+ const note=document.getElementById('prNote');if(note)note.textContent=p.note||'—';
+}
+function renderReceiptLoans(){
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ const s=document.getElementById('receiptLoan');
+ if(s)s.innerHTML='<option value="">Select loan...</option>'+loans.slice().reverse().map(x=>{let term=Number(x.weeks)===0?'FOREVER':x.weeks+' WEEK'+(Number(x.weeks)>1?'S':'');return `<option value="${x.id}">${x.name||'Unnamed'} • ${term} • ${x.id}</option>`}).join('');
+ const ps=document.getElementById('paymentReceiptLoan');
+ if(ps)ps.innerHTML='<option value="">Select loan...</option>'+loans.slice().reverse().map(x=>{let term=Number(x.weeks)===0?'FOREVER':x.weeks+' WEEK'+(Number(x.weeks)>1?'S':'');return `<option value="${x.id}">${x.name||'Unnamed'} • ${term} • ${x.id}</option>`}).join('');
+}
+function refreshTermDashboard(){
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let pays=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ let wrap=document.getElementById('termDashboardCards'); if(!wrap)return;
+ wrap.innerHTML=terms.map(t=>{
+   let term=t[0], rate=t[1], weeks=parseInt(term);
+   let ls=loans.filter(x=>Number(x.weeks)===weeks);
+   let ids=new Set(ls.map(x=>x.id));
+   let ps=pays.filter(x=>ids.has(x.loan));
+   let principal=ls.reduce((a,x)=>a+Number(x.principal||0),0);
+   let collection=ps.reduce((a,x)=>a+Number(x.amount||0),0);
+   let penalty=ps.reduce((a,x)=>a+Number(x.penalty||0),0);
+   let gcash=ls.reduce((a,x)=>a+Number(x.gcash||0),0);
+   let interest=ls.reduce((a,x)=>a+Number(x.principal||0)*Number(x.rate||0)/100,0);
+   let net=interest+gcash+penalty;
+   return `<div class="panel">
+    <h2>💜 ${term} <span class="label">• ${rate}% • 10 client slots</span></h2>
+    <div class="cards">
+      <div class="card"><div class="icon">💰</div><div class="label">Active Principal</div><div class="value">₱${principal.toLocaleString('en-PH',{minimumFractionDigits:2})}</div></div>
+      <div class="card"><div class="icon">💵</div><div class="label">Collections</div><div class="value">₱${collection.toLocaleString('en-PH',{minimumFractionDigits:2})}</div></div>
+      <div class="card"><div class="icon">⚠️</div><div class="label">Penalties</div><div class="value">₱${penalty.toLocaleString('en-PH',{minimumFractionDigits:2})}</div></div>
+      <div class="card"><div class="icon">📈</div><div class="label">Net Income</div><div class="value">₱${net.toLocaleString('en-PH',{minimumFractionDigits:2})}</div></div>
+    </div>
+   </div>`;
+ }).join('');
+}
+function refreshDashboard(){
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let pays=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ let activeLoans=loans.filter(x=>x.status==='Active');
+ let activeBorrowerKeys=new Set(activeLoans.map(x=>String(x.mobile||x.clientId||x.name||x.id).trim().toLowerCase()));
+ let active=activeBorrowerKeys.size;
+ let collections=pays.reduce((a,x)=>a+Number(x.amount||0),0);
+ let penalties=pays.reduce((a,x)=>a+Number(x.penalty||0),0);
+ let gcash=loans.reduce((a,x)=>a+Number(x.gcash||0),0);
+ let principal=loans.reduce((a,x)=>a+Number(x.principal||0),0);
+ let interest=loans.reduce((a,x)=>a+(Number(x.principal||0)*Number(x.rate||0)/100),0);
+ let weeklyCollectibles=activeLoans.reduce((a,x)=>{let w=Number(x.weeks||0);return a+(w>0?Number(x.total||0)/w:0);},0);
+ let interestPerDay=activeLoans.reduce((a,x)=>{let w=Number(x.weeks||0);let it=Number(x.principal||0)*Number(x.rate||0)/100;return a+(w>0?it/(w*7):0);},0);
+ let net=interest+gcash+penalties;
+ let now=new Date(), month=now.getMonth(), year=now.getFullYear();
+ let monthlyInterest=loans.filter(x=>{let d=new Date(x.releaseDate||x.date||'');return d.getFullYear()===year&&d.getMonth()===month;}).reduce((a,x)=>a+(Number(x.principal||0)*Number(x.rate||0)/100),0);
+ let monthlyGcash=loans.filter(x=>{let d=new Date(x.releaseDate||x.date||'');return d.getFullYear()===year&&d.getMonth()===month;}).reduce((a,x)=>a+Number(x.gcash||0),0);
+ let monthlyPenalty=pays.filter(x=>{let d=new Date(x.actualDate||x.paymentDate||x.date||'');return d.getFullYear()===year&&d.getMonth()===month;}).reduce((a,x)=>a+Number(x.penalty||0),0);
+ let monthlyIncome=monthlyInterest+monthlyGcash+monthlyPenalty;
+ const set=(id,val)=>{let e=document.getElementById(id);if(e)e.textContent='₱'+Number(val||0).toLocaleString('en-PH',{minimumFractionDigits:2});};
+ set('dashActive',active);set('dashCollections',collections);set('dashPenalties',penalties);set('dashGcash',gcash);set('dashNet',net);
+ set('dashWeeklyCollectibles',weeklyCollectibles);set('dashInterestPerDay',interestPerDay);set('dashPrincipal',principal);set('dashInterest',interest);set('dashPenaltyCollected',penalties);set('dashMonthlyIncome',monthlyIncome);
+}
+function refreshCollectionsMonitor(){
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let pays=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ let today=new Date(); today.setHours(0,0,0,0);
+ let end=new Date(today); end.setDate(end.getDate()+7);
+ let rows=[];
+ loans.filter(x=>x.status==='Active').forEach(loan=>{
+  getLoanSchedule(loan).forEach(sc=>{
+   let due=new Date(sc.date+'T00:00:00'); due.setHours(0,0,0,0);
+   let paid=pays.filter(v=>v.loan===loan.id&&Number(v.schedule)===sc.no).reduce((a,v)=>a+Number(v.amount||0),0);
+   let balance=Math.max(0,sc.amount-paid);
+   if(balance<=0)return;
+   if(due<=end){
+    let status=due.getTime()===today.getTime()?'🔔 Due Today':(due<today?'⚠️ Overdue':'📆 Upcoming');
+    rows.push({status,name:loan.name||'—',id:loan.id,due:sc.date,scheduled:sc.amount,paid,balance,dueObj:due});
+   }
+  });
+ });
+ rows.sort((a,b)=>a.dueObj-b.dueObj);
+ let dueToday=rows.filter(x=>x.dueObj.getTime()===today.getTime()).length;
+ let overdue=rows.filter(x=>x.dueObj<today).length;
+ let upcoming=rows.filter(x=>x.dueObj>today&&x.dueObj<=end).length;
+ let outstanding=rows.reduce((a,x)=>a+x.balance,0);
+ const set=(id,val)=>{let e=document.getElementById(id);if(e)e.textContent=String(val);};
+ set('dueTodayCount',dueToday);set('overdueCount',overdue);set('upcomingCount',upcoming);
+ let money=document.getElementById('outstandingScheduled'); if(money)money.textContent='₱'+outstanding.toLocaleString('en-PH',{minimumFractionDigits:2});
+ let body=document.getElementById('collectionsMonitorBody'); if(!body)return;
+ body.innerHTML=rows.length?rows.map(x=>`<tr><td>${x.status}</td><td><b>${x.name}</b></td><td>${x.id}</td><td>${new Date(x.due+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'})}</td><td>₱${x.scheduled.toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td>₱${x.paid.toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td><b>₱${x.balance.toLocaleString('en-PH',{minimumFractionDigits:2})}</b></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:#888;padding:20px">No unpaid payments due within the next 7 days.</td></tr>';
+}
+function showById(id){show(id);}
+
+// FINAL startup section guard: only Dashboard is visible on first load.
+(function(){
+  function enforceInitialSection(){
+    const sections=document.querySelectorAll('main.main > section');
+    sections.forEach(sec=>sec.classList.toggle('hidden', sec.id!=='dashboard'));
+    const dash=document.getElementById('dashboard');
+    if(dash) dash.classList.remove('hidden');
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',enforceInitialSection,{once:true});
+  else enforceInitialSection();
+})();
+function show(id,btn){
+ const target=document.getElementById(id);
+ if(!target)return;
+ document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));
+ target.classList.remove('hidden');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+ if(btn)btn.classList.add('active');
+ try{
+  if(id==='dashboard'){refreshDashboard();refreshCollectionsMonitor();}
+  if(id==='clients')renderClients();
+  if(id==='loanBook')renderLoanBookList();
+  if(id==='payment')renderPaymentLoans();
+  if(id==='receipt')renderReceiptLoans();
+  if(id==='termDash')refreshTermDashboard();
+  if(id==='reports')refreshReports();
+  if(id==='documents')renderDocumentLoans();
+  if(id==='cloud')loadCloudConfig();
+  if(id==='backup')refreshBackupCounts();
+ }catch(err){
+  console.error(err);
+  target.insertAdjacentHTML('afterbegin','<div class="panel" style="margin-bottom:12px;background:#fff0f5;color:#8b4770">⚠️ This section loaded, but some information could not be refreshed. Your saved records were not deleted.</div>');
+ }
+ // Never let section navigation horizontally shift the mobile viewport.
+ if(window.matchMedia && window.matchMedia('(max-width:900px)').matches){
+   document.documentElement.scrollLeft=0;
+   document.body.scrollLeft=0;
+   window.scrollTo(0,0);
+ }else{
+   window.scrollTo({top:0,left:0,behavior:'auto'});
+ }
+}
+function calcPenalty(){
+ let days=Number(document.getElementById('daysLate')?.value)||0;
+ let el=document.getElementById('penaltyAmount');
+ if(el) el.textContent='₱'+(days*20).toLocaleString('en-PH',{minimumFractionDigits:2});
+}
+function savePayment(){
+ let loanId=document.getElementById('paymentLoan').value;
+ let scheduleNo=Number(document.getElementById('schedulePayment').value)||0;
+ let amount=Number(document.getElementById('paymentAmount').value)||0;
+ let date=document.getElementById('payDate').value||new Date().toISOString().slice(0,10);
+ let days=Number(document.getElementById('daysLate').value)||0;
+ if(!loanId||!scheduleNo||amount<=0){alert('Please select a loan, scheduled payment, and amount.');return;}
+ let payments=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ let note=(document.getElementById('paymentNote')?.value||'').trim();
+ let already=payments.filter(x=>x.loan===loanId&&Number(x.schedule)===scheduleNo).reduce((a,x)=>a+Number(x.amount||0),0);
+ let loans2=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');let loan2=loans2.find(x=>x.id===loanId);let schedule2=loan2?getLoanSchedule(loan2).find(x=>x.no===scheduleNo):null;
+ if(schedule2 && already>=schedule2.amount){alert('This scheduled payment is already fully paid.');return;}
+ if(schedule2 && already+amount>schedule2.amount){alert('Payment exceeds the remaining scheduled amount of '+money(schedule2.amount-already)+'.');return;}
+ payments.push({id:'PAY-'+Date.now(),loan:loanId,loanId:loanId,schedule:scheduleNo,scheduleNo,amount,date,actualDate:date,penalty:days*20,daysLate:days,note});
+ localStorage.setItem('mr_lends_payments',JSON.stringify(payments));
+ alert('💵 Payment saved as PAID.');
+ loadPaymentSchedule();
+ renderHistory();refreshDashboard();
+}
+function getLoanSchedule(loan){
+ let d=new Date((loan.firstDue||loan.date).slice(0,10)+'T00:00:00');
+ d.setHours(0,0,0,0);
+ let rows=[];
+ let weekly=loan.total/loan.weeks;
+ for(let i=1;i<=loan.weeks;i++){
+  let dd=new Date(d);dd.setDate(d.getDate()+((i-1)*7));
+  rows.push({no:i,date:dd.toISOString().slice(0,10),amount:weekly});
+ }
+ return rows;
+}
+function loadPaymentSchedule(){
+ let loanId=document.getElementById('paymentLoan').value;
+ let body=document.getElementById('paymentScheduleBody');
+ let select=document.getElementById('schedulePayment');
+ let summary=document.getElementById('paymentSummary');
+ if(!loanId){body.innerHTML='<tr><td colspan="6" style="text-align:center;color:#888">Select a loan.</td></tr>';select.innerHTML='<option>Select scheduled payment...</option>';summary.textContent='Select a loan to view its balance and schedule.';return;}
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let loan=loans.find(x=>x.id===loanId);
+ if(!loan)return;
+ loadRenewalSchedule(loanId);
+ let schedule=getLoanSchedule(loan);
+ let payments=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ let paid=payments.filter(x=>x.loan===loanId).reduce((a,x)=>a+Number(x.amount||0),0);
+ let penalties=payments.filter(x=>x.loan===loanId).reduce((a,x)=>a+Number(x.penalty||0),0);
+ let remaining=Math.max(0,loan.total-paid);
+ summary.innerHTML=`Total: <b>₱${loan.total.toLocaleString('en-PH',{minimumFractionDigits:2})}</b> &nbsp; • &nbsp; Paid: <b>₱${paid.toLocaleString('en-PH',{minimumFractionDigits:2})}</b> &nbsp; • &nbsp; Remaining: <b>₱${remaining.toLocaleString('en-PH',{minimumFractionDigits:2})}</b> &nbsp; • &nbsp; Penalties: <b>₱${penalties.toLocaleString('en-PH',{minimumFractionDigits:2})}</b>`;
+ select.innerHTML='<option value="">Select scheduled payment...</option>';
+ let rows='';
+ schedule.forEach(s=>{
+  let sp=payments.filter(x=>x.loan===loanId&&Number(x.schedule)===s.no);
+  let p=sp.reduce((a,x)=>a+Number(x.amount||0),0);
+  let status=p>=s.amount?'PAID':'UNPAID';
+  if(status==='UNPAID')select.innerHTML+=`<option value="${s.no}">#${s.no} • ${s.date} • ₱${s.amount.toLocaleString('en-PH',{minimumFractionDigits:2})}</option>`;
+  let actual=sp.length?sp[sp.length-1].date:'—';
+  rows+=`<tr><td>${s.no}</td><td>${new Date(s.date+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'})}</td><td>${actual}</td><td>₱${s.amount.toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td>₱${p.toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td>${status}</td></tr>`;
+ });
+ body.innerHTML=rows;
+}
+function saveRenewalDate(){
+ let loanId=document.getElementById('paymentLoan').value;
+ let release=document.getElementById('renewReleaseDate').value;
+ let renewal=document.getElementById('renewDate').value;
+ if(!loanId||!renewal){alert('Please select a loan and renewal date.');return;}
+ let data=JSON.parse(localStorage.getItem('mr_lends_renewals')||'[]');
+ let existing=data.findIndex(x=>x.loan===loanId);
+ let rec={loan:loanId,release,renewal,status:'Scheduled'};
+ if(existing>=0)data[existing]=rec;else data.push(rec);
+ localStorage.setItem('mr_lends_renewals',JSON.stringify(data));
+ document.getElementById('renewStatus').textContent='Scheduled for '+renewal;
+ alert('🔄 Renewal schedule saved.');
+}
+function loadRenewalSchedule(loanId){
+ let data=JSON.parse(localStorage.getItem('mr_lends_renewals')||'[]');
+ let x=data.find(v=>v.loan===loanId);
+ if(x){
+  document.getElementById('renewReleaseDate').value=x.release||'';
+  document.getElementById('renewDate').value=x.renewal||'';
+  document.getElementById('renewStatus').textContent='Scheduled for '+x.renewal;
+ }else{
+  document.getElementById('renewReleaseDate').value='';
+  document.getElementById('renewDate').value='';
+  document.getElementById('renewStatus').textContent='Not scheduled';
+ }
+}
+function renderHistory(){
+ let body=document.getElementById('historyBody');
+ if(!body)return;
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let q=(document.getElementById('historySearch')?.value||'').trim().toLowerCase();
+ let filter=document.getElementById('historyFilter')?.value||'ALL';
+ let rows=loans.filter(x=>{
+   let matchQ=!q||String(x.name||'').toLowerCase().includes(q)||String(x.id||'').toLowerCase().includes(q);
+   let matchF=filter==='ALL'||filter==='ACTIVE'?(filter==='ALL'||String(x.status||'')==='Active'):(Number(x.weeks)===Number(filter));
+   if(filter==='COMPLETED') matchF=String(x.status||'').toLowerCase()==='completed';
+   return matchQ&&matchF;
+ });
+ document.getElementById('historyCount').textContent=rows.length+' record'+(rows.length===1?'':'s')+' shown';
+ if(!rows.length){body.innerHTML='<tr><td colspan="8" style="text-align:center;color:#888;padding:20px">No matching loan records.</td></tr>';return;}
+ body.innerHTML=rows.slice().reverse().map(x=>{
+   let renewal=x.renewalDate||'—';
+   return `<tr>
+    <td><b>${x.id}</b></td><td>${x.name||'—'}</td><td>${x.weeks} WEEK${x.weeks>1?'S':''}</td>
+    <td>₱${Number(x.principal||0).toLocaleString('en-PH',{minimumFractionDigits:2})}</td>
+    <td>₱${Number(x.total||0).toLocaleString('en-PH',{minimumFractionDigits:2})}</td>
+    <td>${x.releaseDate||x.date||'—'}</td><td>${renewal}</td><td>${x.status||'—'}</td></tr>`;
+ }).join('');
+}
+
+function renderLoanBookList(){
+ const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ const sel=document.getElementById('loanBookSelect'); if(!sel)return;
+ const current=sel.value;
+ sel.innerHTML='<option value="">Select borrower...</option>'+loans.slice().reverse().map(x=>{let term=Number(x.weeks)===0?'FOREVER':x.weeks+' WEEKS';let weekly=Number(x.weeks)>0?Number(x.total||0)/Number(x.weeks):0;return `<option value="${x.id}">${x.name||'Unnamed Borrower'} • ${term} • ${weekly?money(weekly)+'/wk':'No regular payment'} • ${x.id}</option>`}).join('');
+ if(current && loans.some(x=>x.id===current)){sel.value=current;loadLoanBook(current);}
+}
+function openClientLoanBook(){
+ const name=(document.getElementById('detailName').value||'').trim();
+ const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ const loan=loans.slice().reverse().find(x=>String(x.name||'').trim().toLowerCase()===name.toLowerCase());
+ if(!loan){alert('No saved loan found for this client. Create a New Loan first.');return;}
+ const nav=[...document.querySelectorAll('.nav button')].find(b=>b.textContent.includes('Loan Book'));
+ show('loanBook',nav); setTimeout(()=>{renderLoanBookList();document.getElementById('loanBookSelect').value=loan.id;loadLoanBook(loan.id);},50);
+}
+function openSelectedLoanPayment(){
+ const id=document.getElementById('loanBookSelect')?.value; if(!id)return;
+ const nav=[...document.querySelectorAll('.nav button')].find(b=>b.textContent.includes('Payment'));
+ show('payment',nav); const el=document.getElementById('paymentLoan'); if(el){el.value=id;loadPaymentSchedule();}
+}
+function loadLoanBook(loanId){
+ const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ const payments=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ const loan=loans.find(x=>x.id===loanId); const content=document.getElementById('loanBookContent'); if(!content)return;
+ if(!loan){content.classList.add('hidden');return;}
+ content.classList.remove('hidden');
+ const interest=Number(loan.principal||0)*Number(loan.rate||0)/100;
+ const pays=payments.filter(x=>(x.loanId||x.loan)===loan.id);
+ const paid=pays.reduce((a,x)=>a+Number(x.amount||x.paidAmount||0),0);
+ const penalty=pays.reduce((a,x)=>a+Number(x.penalty||0),0);
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+ document.getElementById('loanBookBorrower').textContent=loan.name||'(Name of Borrower)';
+ document.getElementById('loanBookMeta').textContent=(loan.weeks?loan.weeks+' WEEKS':'FOREVER')+' • '+Number(loan.rate||0)+'% interest • '+(loan.status||'Active');
+ document.getElementById('loanBookId').textContent=loan.id;
+ set('lbName',loan.name||'');set('lbMobile',loan.mobile||'');set('lbAddress',loan.address||'');set('lbEmail',loan.email||'');set('lbFb',loan.fb||'');
+ set('lbRelease',loan.releaseDate||loan.date||'');set('lbTerm',loan.weeks?loan.weeks+' WEEKS':'FOREVER');set('lbPrincipal',money(loan.principal));set('lbInterest',money(interest));set('lbTotal',money(loan.total));set('lbGcash',money(loan.gcash));set('lbDue',loan.firstDue||'');
+ ['lbSumPrincipal','lbSumInterest','lbSumTotal','lbSumPaid','lbSumRemaining','lbSumPenalty'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='₱0.00';});
+ document.getElementById('lbSumPrincipal').textContent=money(loan.principal);document.getElementById('lbSumInterest').textContent=money(interest);document.getElementById('lbSumTotal').textContent=money(loan.total);document.getElementById('lbSumPaid').textContent=money(paid);document.getElementById('lbSumRemaining').textContent=money(Math.max(0,Number(loan.total||0)-paid));document.getElementById('lbSumPenalty').textContent=money(penalty);
+ const body=document.getElementById('loanBookScheduleBody');
+ renderLoanBookDocs(loan.id);
+ if(!Number(loan.weeks)){body.innerHTML='<tr><td colspan="9" style="text-align:center;color:#888">FOREVER loan — no weekly payment schedule.</td></tr>';return;}
+ const sched=getLoanSchedule(loan);
+ body.innerHTML=sched.map(r=>{const p=pays.filter(x=>Number(x.schedule||x.scheduleNo)===r.no);const last=p.slice(-1)[0];const pa=p.reduce((a,x)=>a+Number(x.amount||x.paidAmount||0),0);const pe=p.reduce((a,x)=>a+Number(x.penalty||0),0);const actual=last?.actualDate||last?.paymentDate||last?.date||'';const days=last?.daysLate??'';return `<tr><td>${r.no}</td><td>${r.date}</td><td>${actual||'—'}</td><td>${money(r.amount)}</td><td>${money(pa)}</td><td>${days||0}</td><td>${money(pe)}</td><td>${pa>=r.amount?'🟢 PAID':'🔴 UNPAID'}</td><td>${last?.note||''}</td></tr>`}).join('');
+}
+
+function renderClients(filter){
+ let h='';
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ terms.forEach(t=>{
+  if(filter&&filter!==t[0])return;
+  h+=`<div class="section"><h2>💜 ${t[0]} <span class="label"> • ${t[1]}% automatic • 10 slots</span></h2><div class="slots">`;
+  for(let i=0;i<10;i++){
+   let n=t[2]+i;
+   let slotLoan=loans.slice().reverse().find(x=>Number(x.slot)===n && x.weeks===Number(String(t[0]).split(' ')[0]));
+   let displayName=slotLoan?.name || 'Client '+String(n).padStart(2,'0');
+   let status=slotLoan?.status || 'Available';
+   let cls=slotLoan?'border-color:var(--purple);background:var(--lav)':'';
+   h+=`<div class="slot client-slot" style="${cls}" data-name="${displayName} Client ${String(n).padStart(2,'0')}" onclick="selectClient(${n},'${t[0]}',${t[1]})">
+     <div class="name">${displayName}</div>
+     <div class="status">${slotLoan?'🟣 '+status:'Available'}</div>
+   </div>`;
+  }
+  h+='</div></div>';
+ });
+ document.getElementById('clientPanel').innerHTML=h;
+}
+function filterClients(){
+ let q=(document.getElementById('clientSearch').value||'').toLowerCase();
+ document.querySelectorAll('.client-slot').forEach(x=>{
+   x.style.display=x.dataset.name.toLowerCase().includes(q)?'block':'none';
+ });
+}
+function selectClient(n,term,rate){
+ const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ const weeks=Number(String(term).split(' ')[0]);
+ const loan=loans.slice().reverse().find(x=>Number(x.slot)===n && Number(x.weeks)===weeks);
+ document.getElementById('clientDetail').classList.remove('hidden');
+ document.getElementById('clientDetail').dataset.slot=n;
+ document.getElementById('detailName').value=loan?.name || 'Client '+String(n).padStart(2,'0');
+ document.getElementById('detailMobile').value=loan?.mobile || '';
+ document.getElementById('detailAddress').value=loan?.address || '';
+ document.getElementById('detailTerm').value=term+' • '+rate+'%';
+ document.getElementById('detailPrincipal').value=loan?.principal || '';
+ document.getElementById('detailStatus').value=loan?.status || 'Available';
+ if(loan)renderClientDocs(loan.id); else document.getElementById('clientDocGrid').innerHTML='<div class="label">Save a loan first to attach documents.</div>';
+ updateClientSmsPreview();
+ document.getElementById('clientHistoryPanel').classList.add('hidden');
+ document.getElementById('clientDetail').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function saveClientDetail(){
+ const slot=Number(document.getElementById('clientDetail').dataset.slot||0);
+ const name=(document.getElementById('detailName').value||'').trim();
+ if(!slot||!name){alert('Please select a client slot and enter the client name.');return;}
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let loan=loans.slice().reverse().find(x=>Number(x.slot)===slot);
+ if(!loan){alert('This slot is still available. Create a New Loan first to assign a record to this slot.');return;}
+ loan.name=name; loan.mobile=(document.getElementById('detailMobile').value||'').trim(); loan.address=(document.getElementById('detailAddress').value||'').trim();
+ loan.status=document.getElementById('detailStatus').value;
+ localStorage.setItem('mr_lends_loans',JSON.stringify(loans));
+ renderClients(); renderHistory(); renderPaymentLoans(); renderReceiptLoans(); refreshDashboard();
+ alert('💜 Client information updated successfully.');
+}
+
+function saveClientIncreaseDecision(){
+ const name=(document.getElementById('detailName')?.value||'').trim();
+ const decision=document.getElementById('clientIncreaseDecision')?.value||'PENDING REVIEW';
+ if(!name)return;
+ let records=JSON.parse(localStorage.getItem('mr_lends_increase_reviews')||'[]');
+ records=records.filter(x=>String(x.name||'').toLowerCase()!==name.toLowerCase());
+ records.push({name,decision,updatedAt:new Date().toISOString()});
+ localStorage.setItem('mr_lends_increase_reviews',JSON.stringify(records));
+ const note=document.getElementById('clientIncreaseNote');
+ if(note) note.textContent=decision==='APPROVED FOR INCREASE'?'Borrower is marked approved for a loan limit increase.':decision==='NOT APPROVED'?'Borrower is currently not approved for a loan limit increase.':decision==='REVIEW REQUIRED'?'Further review of payment performance is required before increasing the limit.':'Review payment history, late payments, missed payments, and penalties before approving an increase.';
+}
+function showClientHistory(){
+ const name=(document.getElementById('detailName').value||'').trim();
+ const panel=document.getElementById('clientHistoryPanel');
+ if(!name){alert('Please select a client first.');return;}
+ const reviews=JSON.parse(localStorage.getItem('mr_lends_increase_reviews')||'[]');
+ const review=reviews.find(x=>String(x.name||'').trim().toLowerCase()===name.toLowerCase());
+ const decisionEl=document.getElementById('clientIncreaseDecision');
+ if(decisionEl) decisionEl.value=review?.decision||'PENDING REVIEW';
+ const loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ const payments=JSON.parse(localStorage.getItem('mr_lends_payments')||'[]');
+ const renewals=JSON.parse(localStorage.getItem('mr_lends_renewals')||'[]');
+ const matches=loans.filter(x=>String(x.name||'').trim().toLowerCase()===name.toLowerCase());
+ const ids=new Set(matches.map(x=>x.id));
+ const pays=payments.filter(x=>ids.has(x.loanId||x.loan||x.id));
+ const totalPrincipal=matches.reduce((a,x)=>a+Number(x.principal||0),0);
+ const totalPaid=pays.reduce((a,x)=>a+Number(x.amount||x.paidAmount||0),0);
+ const totalPenalty=pays.reduce((a,x)=>a+Number(x.penalty||0),0);
+ document.getElementById('clientHistorySummary').innerHTML=
+   '👤 <b>'+name+'</b> &nbsp; • &nbsp; Loans: <b>'+matches.length+'</b> &nbsp; • &nbsp; Principal released: <b>₱'+totalPrincipal.toLocaleString('en-PH',{minimumFractionDigits:2})+
+   '</b> &nbsp; • &nbsp; Payments: <b>₱'+totalPaid.toLocaleString('en-PH',{minimumFractionDigits:2})+
+   '</b> &nbsp; • &nbsp; Penalties: <b>₱'+totalPenalty.toLocaleString('en-PH',{minimumFractionDigits:2})+'</b>';
+ document.getElementById('clientLoanHistoryBody').innerHTML=matches.length?matches.slice().reverse().map(x=>{
+   const r=renewals.find(v=>v.loan===x.id);
+   return `<tr><td>${x.id}</td><td>${x.weeks} WEEK${x.weeks>1?'S':''}</td><td>₱${Number(x.principal||0).toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td>₱${Number(x.total||0).toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td>${x.releaseDate||x.date||''}</td><td>${r?.renewal||x.renewalDate||'—'}</td><td>${x.status||''}</td></tr>`;
+ }).join(''):'<tr><td colspan="7" style="text-align:center;color:#888">No loan records found for this client.</td></tr>';
+ document.getElementById('clientPaymentHistoryBody').innerHTML=pays.length?pays.slice().reverse().map(x=>{
+   const amt=Number(x.amount||x.paidAmount||0);
+   return `<tr><td>${x.loanId||x.loan||'—'}</td><td>${x.scheduleNo||x.paymentNo||'—'}</td><td>₱${Number(x.scheduled||x.scheduledAmount||0).toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td>₱${amt.toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td>${x.actualDate||x.paymentDate||x.date||'—'}</td><td>₱${Number(x.penalty||0).toLocaleString('en-PH',{minimumFractionDigits:2})}</td></tr>`;
+ }).join(''):'<tr><td colspan="6" style="text-align:center;color:#888">No payment records found for this client.</td></tr>';
+ panel.classList.remove('hidden');
+ panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderPaymentLoans(){
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let s=document.getElementById('paymentLoan'); if(!s)return;
+ s.innerHTML='<option value="">Select client / loan...</option>'+loans.slice().reverse().map(x=>{let term=Number(x.weeks)===0?'FOREVER':x.weeks+' WEEK'+(Number(x.weeks)>1?'S':'');let weekly=Number(x.weeks)>0?Number(x.total||0)/Number(x.weeks):0;return `<option value="${x.id}">${x.name||'Unnamed'} • ${term} • ${weekly?('₱'+weekly.toLocaleString('en-PH',{minimumFractionDigits:2})+'/wk'):'No regular payment'} • ${x.id}</option>`;}).join('');
+}
+function calc(){
+ let p=Number(document.getElementById('principal').value)||0;
+ let rate=Number(document.getElementById('term').value.split('|')[1]);
+ let interest=p*rate/100;
+ let gcash=Math.floor(p/500)*15;
+ document.getElementById('interest').textContent='₱'+interest.toLocaleString('en-PH',{minimumFractionDigits:2});
+ document.getElementById('gcash').textContent='₱'+gcash.toLocaleString('en-PH',{minimumFractionDigits:2});
+ document.getElementById('total').textContent='₱'+(p+interest+gcash).toLocaleString('en-PH',{minimumFractionDigits:2});
+}
+function makeSchedule(){
+ let p=Number(document.getElementById('principal').value)||0;
+ let term=Number(document.getElementById('term').value.split('|')[0]);
+ let rate=Number(document.getElementById('term').value.split('|')[1]);
+ if(term===0){document.getElementById('weeklyPay').value='—'; body.innerHTML='<tr><td colspan="4" style="text-align:center;color:#888">FOREVER record — no regular payment schedule.</td></tr>';return;}
+ let due=document.getElementById('firstDue').value;
+ let body=document.getElementById('scheduleBody');
+ if(!p||!due){body.innerHTML='<tr><td colspan="4" style="text-align:center;color:#888">Enter principal and due date.</td></tr>';return;}
+ let total=p+(p*rate/100)+Math.floor(p/500)*15;
+ let weekly=total/term;
+ document.getElementById('weeklyPay').value='₱'+weekly.toLocaleString('en-PH',{minimumFractionDigits:2});
+ let d=new Date(due+'T00:00:00'), rows='';
+ for(let i=1;i<=term;i++){
+   let dd=new Date(d); dd.setDate(d.getDate()+((i-1)*7));
+   let ds=dd.toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'});
+   rows+=`<tr><td>${i}</td><td>${ds}</td><td>₱${weekly.toLocaleString('en-PH',{minimumFractionDigits:2})}</td><td>Unpaid</td></tr>`;
+ }
+ body.innerHTML=rows;
+}
+function autoRenewalDate(){
+ let release=document.getElementById('loanReleaseDate')?.value;
+ let weeks=Number((document.getElementById('term')?.value||'1|10').split('|')[0]);
+ let out=document.getElementById('newLoanRenewalDate');
+ if(!release||!out)return;
+ if(weeks===0){out.value='';return;}
+ let d=new Date(release+'T00:00:00');
+ d.setDate(d.getDate()+weeks*7);
+ out.value=d.toISOString().slice(0,10);
+}
+function clearLoanForm(){
+ ['clientName','clientMobile','clientAddress','clientEmail','clientFB','emergencyContact','loanPurpose','loanNotes','principal','firstDue','newLoanRenewalDate'].forEach(id=>{let e=document.getElementById(id);if(e)e.value='';});
+ document.getElementById('term').value='1|10';
+ document.getElementById('newLoanRenewalStatus').value='Scheduled';
+ document.getElementById('weeklyPay').value='';
+ document.getElementById('scheduleBody').innerHTML='<tr><td colspan="4" style="text-align:center;color:#888">Enter principal and due date.</td></tr>';
+ calc();
+}
+function saveLoan(){
+ let name=(document.getElementById('clientName').value||'').trim();
+ let mobile=(document.getElementById('clientMobile').value||'').trim();
+ let address=(document.getElementById('clientAddress').value||'').trim();
+ let email=(document.getElementById('clientEmail').value||'').trim();
+ let fb=(document.getElementById('clientFB').value||'').trim();
+ let emergency=(document.getElementById('emergencyContact').value||'').trim();
+ let purpose=(document.getElementById('loanPurpose')?.value||'').trim();
+ let notes=(document.getElementById('loanNotes')?.value||'').trim();
+ let p=Number(document.getElementById('principal').value)||0;
+ let release=document.getElementById('loanReleaseDate').value||new Date().toISOString().slice(0,10);
+ let firstDue=document.getElementById('firstDue').value;
+ let termData=document.getElementById('term').value.split('|');
+ let weeks=Number(termData[0]), rate=Number(termData[1]);
+ if(!name||!mobile||!p||(weeks!==0&&!firstDue)){alert('Please complete Full Name, Mobile Number, Principal Amount'+(weeks!==0?' and First Due Date.':'.'));return;}
+ let interest=p*rate/100, gcash=Math.floor(p/500)*15, total=p+interest+gcash;
+ let loans=JSON.parse(localStorage.getItem('mr_lends_loans')||'[]');
+ let usedSlots=loans.filter(x=>Number(x.weeks)===weeks && x.status!=='Completed').map(x=>Number(x.slot)).filter(Boolean);
+ let slotStart={1:1,4:11,5:21,7:31,8:41,0:51}[weeks]||1;
+ let slot=Array.from({length:10},(_,i)=>slotStart+i).find(n=>!usedSlots.includes(n));
+ if(!slot){alert('⚠️ All 10 client slots for '+weeks+' WEEK'+(weeks>1?'S':'')+' are currently occupied.');return;}
+ let id='LN-'+Date.now();
+ let renewal=document.getElementById('newLoanRenewalDate').value||'';
+ let status=document.getElementById('newLoanRenewalStatus').value||'Scheduled';
+ loans.push({id,slot,name,mobile,address,email,fb,emergency,purpose,notes,principal:p,weeks,rate,gcash,total,status:'Active',date:release,releaseDate:release,firstDue,renewalDate:renewal,renewalStatus:status});
+ localStorage.setItem('mr_lends_loans',JSON.stringify(loans));
+ if(renewal){
+  let renewals=JSON.parse(localStorage.getItem('mr_lends_renewals')||'[]');
+  renewals.push({loan:id,release,renewal,status});
+  localStorage.setItem('mr_lends_renewals',JSON.stringify(renewals));
+ }
+ alert('💜 New loan record saved successfully!\nLoan ID: '+id);
+ renderHistory();renderPaymentLoans();renderReceiptLoans();refreshDashboard();
+}
+
+
+function money(n){return '₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2});}
+function allData(){return {loans:JSON.parse(localStorage.getItem('mr_lends_loans')||'[]'),payments:JSON.parse(localStorage.getItem('mr_lends_payments')||'[]'),renewals:JSON.parse(localStorage.getItem('mr_lends_renewals')||'[]')};}
+function refreshAll(){renderClients();renderHistory();renderPaymentLoans();renderReceiptLoans();refreshDashboard();refreshCollectionsMonitor();refreshTermDashboard();refreshReports();refreshBackupCounts();}
+function refreshReports(){
+ const {loans,payments}=allData(); let principal=0,pay=0,interest=0,gcash=0,pen=0;
+ loans.forEach(x=>{principal+=+x.principal||0;interest+=+x.principal*x.rate/100||0;gcash+=+x.gcash||0;}); payments.forEach(x=>{pay+=+x.amount||+x.paidAmount||0;pen+=+x.penalty||0;});
+ const set=(id,v)=>{let e=document.getElementById(id);if(e)e.textContent=money(v)}; set('repPrincipal',principal);set('repPayments',pay);set('repInterest',interest);set('repGcash',gcash);set('repPenalty',pen);set('repNet',interest+gcash+pen);
+ const terms2=[['1 WEEK',1],['4 WEEKS',4],['5 WEEKS',5],['7 WEEKS',7],['8 WEEKS',8],['FOREVER',0]];
+ document.getElementById('reportTermBody').innerHTML=terms2.map(([label,w])=>{let ls=loans.filter(x=>+x.weeks===w), ids=new Set(ls.map(x=>x.id)), ps=payments.filter(x=>ids.has(x.loanId||x.loan));let pr=ls.reduce((a,x)=>a+(+x.principal||0),0), it=ls.reduce((a,x)=>a+(+x.principal*x.rate/100||0),0), gc=ls.reduce((a,x)=>a+(+x.gcash||0),0), pp=ps.reduce((a,x)=>a+(+x.amount||+x.paidAmount||0),0), pe=ps.reduce((a,x)=>a+(+x.penalty||0),0);return `<tr><td>${label}</td><td>${ls.length}</td><td>${money(pr)}</td><td>${money(it)}</td><td>${money(gc)}</td><td>${money(pp)}</td><td>${money(pe)}</td><td>${money(it+gc+pe)}</td></tr>`}).join('');
+ let days={};payments.forEach(x=>{let d=x.actualDate||x.paymentDate||x.date||'';if(!d)return;(days[d]??={p:0,pen:0});days[d].p+=+x.amount||+x.paidAmount||0;days[d].pen+=+x.penalty||0});let keys=Object.keys(days).sort().reverse();document.getElementById('reportDailyBody').innerHTML=keys.length?keys.map(d=>`<tr><td>${d}</td><td>${money(days[d].p)}</td><td>${money(days[d].pen)}</td><td>${money(days[d].p+days[d].pen)}</td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;color:#888">No payment records yet.</td></tr>';
+}
+function refreshBackupCounts(){const d=allData();let e=document.getElementById('backupCounts');if(e)e.innerHTML=`Loans: <b>${d.loans.length}</b> &nbsp; • &nbsp; Payments: <b>${d.payments.length}</b> &nbsp; • &nbsp; Renewals: <b>${d.renewals.length}</b>`;}
+function downloadBackup(){const data={app:'M.R LENDS',version:'CURRENT',exportedAt:new Date().toISOString(),...allData()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='MR_LENDS_BACKUP_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);}
+function restoreBackup(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.loans)||!Array.isArray(d.payments)||!Array.isArray(d.renewals))throw new Error('Invalid backup');if(!confirm('Restore backup? Current browser records will be replaced.'))return;localStorage.setItem('mr_lends_loans',JSON.stringify(d.loans));localStorage.setItem('mr_lends_payments',JSON.stringify(d.payments));localStorage.setItem('mr_lends_renewals',JSON.stringify(d.renewals));refreshAll();alert('💜 Backup restored successfully.')}catch(e){alert('Invalid M.R LENDS backup file.')}};r.readAsText(f);ev.target.value='';}
+function clearAllData(){if(!confirm('This will delete ALL local M.R LENDS records from this browser. Continue?'))return;if(!confirm('FINAL CONFIRMATION: Make sure you have downloaded a backup first.'))return;['mr_lends_loans','mr_lends_payments','mr_lends_renewals','mr_lends_clients'].forEach(k=>localStorage.removeItem(k));refreshAll();alert('All local records have been cleared.');}
+function exportCSV(){const {loans}=allData();let rows=[['Loan ID','Client','Term','Principal','Interest','GCash','Total','Release Date','First Due','Renewal Date','Status']];loans.forEach(x=>rows.push([x.id,x.name,x.weeks?x.weeks+' WEEKS':'FOREVER',x.principal,x.principal*x.rate/100,x.gcash,x.total,x.releaseDate,x.firstDue||'',x.renewalDate||'',x.status]));const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='MR_LENDS_LOAN_REPORT.csv';a.click();}
+
+show('dashboard');
+const todayISO=new Date().toISOString().slice(0,10);let payDateEl=document.getElementById('payDate');if(payDateEl&&!payDateEl.value)payDateEl.value=todayISO;
+show('dashboard');
+renderClients();
+refreshDashboard();
+refreshCollectionsMonitor();
+refreshReports();
+refreshBackupCounts();
+loadCloudConfig();
+</script>
+<script>
+(async()=>{
+  if(!('serviceWorker' in navigator)) return;
+  try{
+    const regs=await navigator.serviceWorker.getRegistrations();
+    for(const r of regs){ try{await r.unregister();}catch(e){} }
+    if('caches' in window){
+      const keys=await caches.keys();
+      for(const k of keys){ if(String(k).toLowerCase().includes('mr-lends')){ try{await caches.delete(k);}catch(e){} } }
+    }
+  }catch(e){}
+})();
+</script>
+
+<script>
+function buildMobileMenu(){
+  const panel=document.getElementById('mobileMenuPanel');
+  const source=document.querySelectorAll('.side .nav button');
+  if(!panel || !source.length || panel.dataset.ready==='1') return;
+  source.forEach((src)=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.innerHTML=src.innerHTML;
+    const action=src.getAttribute('onclick')||'';
+    b.setAttribute('onclick', action+'; closeMobileMenu();');
+    panel.appendChild(b);
+  });
+  panel.dataset.ready='1';
+}
+function openMobileMenu(){
+  buildMobileMenu();
+  const panel=document.getElementById('mobileMenuPanel');
+  const btn=document.getElementById('mobileMenuToggle');
+  if(panel)panel.classList.add('open');
+  if(btn)btn.textContent='✕';
+}
+function closeMobileMenu(){
+  const panel=document.getElementById('mobileMenuPanel');
+  const btn=document.getElementById('mobileMenuToggle');
+  if(panel)panel.classList.remove('open');
+  if(btn)btn.textContent='☰';
+}
+function toggleMobileMenu(){
+  const panel=document.getElementById('mobileMenuPanel');
+  if(panel && panel.classList.contains('open')) closeMobileMenu();
+  else openMobileMenu();
+}
+
+document.addEventListener('click',function(e){
+  if(window.innerWidth<=900 && e.target.closest('#mobileMenuPanel button')) closeMobileMenu();
+});
+buildMobileMenu();
+</script>
+
+
+<script>
+/* FINAL MOBILE NAVIGATION FIX */
+(function(){
+  function finalShow(id, btn){
+    var target=document.getElementById(id);
+    if(!target) return;
+
+    document.querySelectorAll('main > section').forEach(function(s){
+      s.classList.remove('section-active');
+      s.classList.add('hidden');
+    });
+    target.classList.remove('hidden');
+    target.classList.add('section-active');
+
+    document.querySelectorAll('.nav button').forEach(function(x){
+      x.classList.remove('active');
+    });
+    if(btn) btn.classList.add('active');
+
+    try{
+      if(id==='dashboard'){refreshDashboard();refreshCollectionsMonitor();}
+      else if(id==='clients'){renderClients();}
+      else if(id==='loanBook'){renderLoanBookList();}
+      else if(id==='payment'){renderPaymentLoans();}
+      else if(id==='receipt'){renderReceiptLoans();}
+      else if(id==='termDash'){refreshTermDashboard();}
+      else if(id==='reports'){refreshReports();}
+      else if(id==='documents'){renderDocumentLoans();}
+      else if(id==='cloud'){loadCloudConfig();}
+      else if(id==='backup'){refreshBackupCounts();}
+    }catch(err){
+      console.error('M.R LENDS refresh error:',err);
+      /* Do not insert a large error panel into the page. */
+    }
+
+    if(window.innerWidth<=900){
+      document.documentElement.scrollTop=0;
+      document.body.scrollTop=0;
+      window.scrollTo(0,0);
+      if(typeof closeMobileMenu==='function') closeMobileMenu();
+    }else{
+      window.scrollTo(0,0);
+    }
+  }
+
+  window.show=finalShow;
+  window.showById=function(id){ finalShow(id); };
+
+  function initFinalSection(){
+    var current=document.querySelector('main > section.section-active');
+    if(!current){
+      document.querySelectorAll('main > section').forEach(function(s){
+        s.classList.remove('section-active');
+        s.classList.add('hidden');
+      });
+      var dash=document.getElementById('dashboard');
+      if(dash){
+        dash.classList.remove('hidden');
+        dash.classList.add('section-active');
+      }
+    }
+    if(window.innerWidth<=900){
+      document.documentElement.scrollTop=0;
+      document.body.scrollTop=0;
+      window.scrollTo(0,0);
+    }
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',initFinalSection);
+  }else{
+    initFinalSection();
+  }
+})();
+</script>
+
+<style id="mr-lends-final-stable-nav">
+/* FINAL STABLE SECTION CONTROLLER
+   Only one top-level app section can occupy the page at a time. */
+main.main > section{
+  display:none !important;
+  visibility:hidden !important;
+  width:100% !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+}
+main.main > section[data-mr-active="1"]{
+  display:block !important;
+  visibility:visible !important;
+  height:auto !important;
+  min-height:0 !important;
+  overflow:visible !important;
+}
+@media(max-width:900px){
+  main.main{
+    margin-left:0 !important;
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    padding:58px 10px 20px !important;
+    overflow-x:hidden !important;
+  }
+}
+</style>
+<script>
+/* FINAL STABLE NAVIGATION — last controller wins */
+(function(){
+  function allSections(){
+    return Array.prototype.slice.call(document.querySelectorAll('main.main > section'));
+  }
+
+  function setOnly(id){
+    var sections = allSections();
+    var target = document.getElementById(id);
+    if(!target || sections.indexOf(target) === -1){
+      target = document.getElementById('dashboard');
+      id = 'dashboard';
+    }
+
+    sections.forEach(function(s){
+      s.removeAttribute('data-mr-active');
+      s.classList.add('hidden');
+    });
+
+    /* Remove the old hidden class from the one section we actually want. */
+    target.classList.remove('hidden');
+    target.setAttribute('data-mr-active','1');
+
+    return target;
+  }
+
+  function refreshFor(id){
+    try{
+      if(id==='dashboard'){
+        if(typeof refreshDashboard==='function') refreshDashboard();
+        if(typeof refreshCollectionsMonitor==='function') refreshCollectionsMonitor();
+      }else if(id==='clients'){
+        if(typeof renderClients==='function') renderClients();
+      }else if(id==='loanBook'){
+        if(typeof renderLoanBookList==='function') renderLoanBookList();
+      }else if(id==='payment'){
+        if(typeof renderPaymentLoans==='function') renderPaymentLoans();
+      }else if(id==='receipt'){
+        if(typeof renderReceiptLoans==='function') renderReceiptLoans();
+      }else if(id==='termDash'){
+        if(typeof refreshTermDashboard==='function') refreshTermDashboard();
+      }else if(id==='reports'){
+        if(typeof refreshReports==='function') refreshReports();
+      }else if(id==='documents'){
+        if(typeof renderDocumentLoans==='function') renderDocumentLoans();
+      }else if(id==='cloud'){
+        if(typeof loadCloudConfig==='function') loadCloudConfig();
+      }else if(id==='backup'){
+        if(typeof refreshBackupCounts==='function') refreshBackupCounts();
+      }
+    }catch(err){
+      console.error('M.R LENDS section refresh:',err);
+    }
+  }
+
+  function stableShow(id, btn){
+    var target = setOnly(id);
+    var activeId = target.id;
+
+    document.querySelectorAll('.nav button').forEach(function(x){
+      x.classList.remove('active');
+    });
+    if(btn && btn.classList) btn.classList.add('active');
+
+    refreshFor(activeId);
+
+    /* Always return to the top of the newly selected section. */
+    requestAnimationFrame(function(){
+      try{
+        window.scrollTo({top:0,left:0,behavior:'instant'});
+      }catch(e){
+        window.scrollTo(0,0);
+      }
+      document.documentElement.scrollTop=0;
+      document.body.scrollTop=0;
+    });
+
+    if(window.innerWidth<=900 && typeof closeMobileMenu==='function'){
+      closeMobileMenu();
+    }
+  }
+
+  window.show = stableShow;
+  window.showById = function(id){ stableShow(id,null); };
+
+  function boot(){
+    var sections = allSections();
+    if(!sections.length) return;
+
+    var current = sections.find(function(s){
+      return s.getAttribute('data-mr-active')==='1';
+    });
+
+    if(!current) setOnly('dashboard');
+    else setOnly(current.id);
+
+    /* Rebuild the mobile menu once after the navigation functions exist. */
+    try{
+      var panel=document.getElementById('mobileMenuPanel');
+      if(panel) panel.dataset.ready='';
+      if(typeof buildMobileMenu==='function') buildMobileMenu();
+    }catch(e){}
+
+    requestAnimationFrame(function(){
+      document.documentElement.scrollTop=0;
+      document.body.scrollTop=0;
+    });
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot,{once:true});
+  }else{
+    boot();
+  }
+})();
+</script>
+
+</body>
+</html>
